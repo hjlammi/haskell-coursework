@@ -5,4 +5,6 @@ name :: ReadP String
 name = do
   name <- many1 $ satisfy (\char -> char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z')
   satisfy (== ' ')
-  return name
+  case name of
+    "The" -> return ""
+    _ -> return name
