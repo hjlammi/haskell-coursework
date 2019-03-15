@@ -1,13 +1,15 @@
+module Person where
+
 data Person = Person {
                       name :: String,
-                      location :: String
-                     } deriving (Show)
+                      location :: Maybe String
+                     } deriving (Show, Eq)
 
-getName :: Person -> String
-getName (Person {name=n}) = n
+getName :: Person -> Maybe String
+getName (Person {name = n, location = _}) = Just n
 
 setLocation :: Person -> String -> Person
-setLocation person l = person {location=l}
+setLocation person l = person {location = Just l}
 
-getLocation :: Person -> String
-getLocation (Person {location=l}) = l
+getLocation :: Person -> Maybe String
+getLocation (Person {location = Just l}) = Just l
