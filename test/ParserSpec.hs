@@ -6,10 +6,10 @@ import Parser
 
 main :: IO ()
 main = hspec $ do
-  describe "name" $ do
+  describe "nameParser" $ do
     it "returns the name of the person from the input string" $
-      readP_to_S name "John moved to the office" `shouldBe` [("John", "moved to the office")]
+      readP_to_S nameParser "John moved to the office" `shouldBe` [("John", "moved to the office")]
 
-  describe "name" $ do
+  describe "nameParser" $ do
     it "returns an empty string because no name is found" $
-      readP_to_S name "The bathroom is east of the bedroom" `shouldBe` [("", "bathroom is east of the bedroom")]
+      readP_to_S nameParser "The bathroom is east of the bedroom" `shouldBe` []
