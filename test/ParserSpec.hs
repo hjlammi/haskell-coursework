@@ -13,3 +13,7 @@ main = hspec $ do
   describe "nameParser" $ do
     it "returns an empty string because no name is found" $
       readP_to_S nameParser "The bathroom is east of the bedroom" `shouldBe` []
+
+  describe "verbParser" $ do
+    it "discards the verb followed by preposition to" $
+      readP_to_S verbParser "moved to the office" `shouldBe` [((), "the office")]
