@@ -1,6 +1,7 @@
 module Parser where
 import Text.ParserCombinators.ReadP
 
+nameParser :: ReadP String
 nameParser = do
   name <- readSubStr
   satisfy (== ' ')
@@ -21,6 +22,7 @@ verbParser = do
       satisfy (== ' ')
       return ()
 
+readSubStr :: ReadP String
 readSubStr = many1 $ satisfy (\char -> char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z')
 
 isInList :: String -> [String] -> Bool
