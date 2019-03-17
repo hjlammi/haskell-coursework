@@ -12,10 +12,14 @@ nameParser = do
 verbParser :: ReadP ()
 verbParser = do
   verb <- readSubStr
-  satisfy (== ' ')
-  string "to"
-  satisfy (== ' ')
-  return ()
+  if not $ isInList verb ["moved", "went", "journeyed", "travelled"]
+    then
+      pfail
+    else do
+      satisfy (== ' ')
+      string "to"
+      satisfy (== ' ')
+      return ()
 
 readSubStr = many1 $ satisfy (\char -> char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z')
 

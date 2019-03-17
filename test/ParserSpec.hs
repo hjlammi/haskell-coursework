@@ -25,3 +25,19 @@ main = hspec $ do
   describe "verbParser" $ do
     it "discards the verb followed by preposition to" $
       readP_to_S verbParser "moved to the office" `shouldBe` [((), "the office")]
+
+  describe "verbParser" $ do
+    it "fails if given invalid verb" $
+      readP_to_S verbParser "pliiped to the office" `shouldBe` []
+
+  describe "verbParser" $ do
+    it "should return empty tuple i.e. work with the word went" $
+      readP_to_S verbParser "went to the office" `shouldBe` [((), "the office")]
+
+  describe "verbParser" $ do
+    it "should return empty tuple i.e. work with the word journeyed" $
+      readP_to_S verbParser "journeyed to the office" `shouldBe` [((), "the office")]
+
+  describe "verbParser" $ do
+    it "should return empty tuple i.e. work with the word travelled" $
+      readP_to_S verbParser "travelled to the school" `shouldBe` [((), "the school")]
