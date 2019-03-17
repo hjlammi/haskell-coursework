@@ -51,10 +51,10 @@ main = hspec $ do
     it "should return school as the location" $
       readP_to_S locationParser "the school" `shouldBe` [("school", "")]
 
-  describe "mainParser" $ do
+  describe "movementParser" $ do
     it "returns the name John and the current place office" $
-      readP_to_S mainParser "John moved to the office" `shouldBe` [(Person {name = "John", location = Just "office"}, "")]
+      readP_to_S movementParser "John moved to the office" `shouldBe` [(Person {name = "John", location = Just "office"}, "")]
 
-  describe "mainParser" $ do
+  describe "movementParser" $ do
     it "returns the name Daniel and the current place bedroom" $
-      readP_to_S mainParser "Daniel journeyed to the bedroom" `shouldBe` [(Person {name = "Daniel", location = Just "bedroom"}, "")]
+      readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(Person {name = "Daniel", location = Just "bedroom"}, "")]

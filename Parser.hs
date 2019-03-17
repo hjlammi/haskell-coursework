@@ -2,8 +2,8 @@ module Parser where
 import Text.ParserCombinators.ReadP
 import Person
 
-mainParser :: ReadP Person
-mainParser = do
+movementParser :: ReadP Person
+movementParser = do
   name <- nameParser
   verb <- verbParser
   location <-locationParser
