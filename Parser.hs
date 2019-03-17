@@ -18,3 +18,8 @@ verbParser = do
   return ()
 
 readSubStr = many1 $ satisfy (\char -> char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z')
+
+isInList :: String -> [String] -> Bool
+isInList word words
+  | elem word words = True
+  | otherwise       = False
