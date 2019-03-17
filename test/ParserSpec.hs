@@ -3,6 +3,7 @@ module ParserSpec where
 import Text.ParserCombinators.ReadP
 import Test.Hspec
 import Parser
+import Person
 
 main :: IO ()
 main = hspec $ do
@@ -45,3 +46,11 @@ main = hspec $ do
   describe "locationParser" $ do
     it "should return school as the location" $
       readP_to_S locationParser "the school" `shouldBe` [("school", "")]
+
+  describe "mainParser" $ do
+    it "returns the name John and the current place office" $
+      readP_to_S mainParser "John moved to the office" `shouldBe` [(Person {name = "John", location = Just "office"}, "")]
+
+  describe "mainParser" $ do
+    it "returns the name Daniel and the current place bedroom" $
+      readP_to_S mainParser "Daniel journeyed to the bedroom" `shouldBe` [(Person {name = "Daniel", location = Just "bedroom"}, "")]

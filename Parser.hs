@@ -1,5 +1,13 @@
 module Parser where
 import Text.ParserCombinators.ReadP
+import Person
+
+mainParser :: ReadP Person
+mainParser = do
+  name <- nameParser
+  verb <- verbParser
+  location <-locationParser
+  return Person { name = name, location = (Just location) }
 
 nameParser :: ReadP String
 nameParser = do
