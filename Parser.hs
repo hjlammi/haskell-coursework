@@ -21,14 +21,14 @@ nameParser = do
 verbParser :: ReadP ()
 verbParser = do
   verb <- readSubStr
-  if not $ isInList verb ["moved", "went", "journeyed", "travelled"]
-    then
-      pfail
-    else do
+  if isInList verb ["moved", "went", "journeyed", "travelled"]
+    then do
       satisfy (== ' ')
       string "to"
       satisfy (== ' ')
       return ()
+    else
+      pfail
 
 locationParser :: ReadP String
 locationParser = do
