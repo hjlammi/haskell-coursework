@@ -22,6 +22,14 @@ verbParser = do
       satisfy (== ' ')
       return ()
 
+locationParser :: ReadP String
+locationParser = do
+  string "the"
+  satisfy (== ' ')
+  location <- readSubStr
+  eof
+  return location
+
 readSubStr :: ReadP String
 readSubStr = many1 $ satisfy (\char -> char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z')
 
