@@ -43,6 +43,10 @@ main = hspec $ do
     it "should return empty tuple i.e. work with the word travelled" $
       readP_to_S verbParser "travelled to the school" `shouldBe` [((), "the school")]
 
+  describe "verbParser" $ do
+    it "should return empty tuple i.e. work with the word took" $
+      readP_to_S verbParser "took the football" `shouldBe` [((), "the football")]
+
   describe "locationParser" $ do
     it "should return school as the location" $
       readP_to_S locationParser "the school" `shouldBe` [("school", "")]

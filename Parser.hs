@@ -28,7 +28,12 @@ verbParser = do
       satisfy (== ' ')
       return ()
     else
-      pfail
+      if isInList verb ["took"]
+      then do
+        satisfy (== ' ')
+        return ()
+      else
+        pfail
 
 locationParser :: ReadP String
 locationParser = do
