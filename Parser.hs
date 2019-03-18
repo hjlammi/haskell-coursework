@@ -6,14 +6,14 @@ import Object
 movementParser :: ReadP Person
 movementParser = do
   name <- nameParser
-  verb <- verbParser
+  verb <- verbMoveParser
   location <-locationParser
   return Person { name = name, location = (Just location), object = Nothing }
 
-takingObjectParser :: ReadP Person
-takingObjectParser = do
+gettingObjectParser :: ReadP Person
+gettingObjectParser = do
   name <- nameParser
-  verb <- verbParser
+  verb <- verbGetObjectParser
   object <- objectParser
   return Person { name = name, location = Nothing, object = Just object }
 
@@ -26,8 +26,8 @@ nameParser = do
   else
     return name
 
-verbParser :: ReadP ()
-verbParser = do
+verbMoveParser :: ReadP ()
+verbMoveParser = do
   verb <- readSubStr
   if isInList verb ["moved", "went", "journeyed", "travelled"]
     then do
@@ -36,12 +36,17 @@ verbParser = do
       satisfy (== ' ')
       return ()
     else
-      if isInList verb ["took"]
-      then do
-        satisfy (== ' ')
-        return ()
-      else
-        pfail
+      pfail
+
+verbGetObjectParser :: ReadP ()
+verbGetObjectParser = do
+  verb <- readSubStr
+  if isInList verb ["took", "got"]
+    then do
+      satisfy (== ' ')
+      return ()
+    else
+      pfail
 
 locationParser :: ReadP String
 locationParser = do

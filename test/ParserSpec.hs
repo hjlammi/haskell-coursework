@@ -24,29 +24,29 @@ main = hspec $ do
     it "returns False because the word is included in the list of words" $
       isInList "came" ["went", "moved"] `shouldBe` False
 
-  describe "verbParser" $ do
+  describe "verbMoveParser" $ do
     it "discards the verb followed by preposition to" $
-      readP_to_S verbParser "moved to the office" `shouldBe` [((), "the office")]
+      readP_to_S verbMoveParser "moved to the office" `shouldBe` [((), "the office")]
 
-  describe "verbParser" $ do
+  describe "verbMoveParser" $ do
     it "fails if given invalid verb" $
-      readP_to_S verbParser "pliiped to the office" `shouldBe` []
+      readP_to_S verbMoveParser "pliiped to the office" `shouldBe` []
 
-  describe "verbParser" $ do
+  describe "verbMoveParser" $ do
     it "should return empty tuple i.e. work with the word went" $
-      readP_to_S verbParser "went to the office" `shouldBe` [((), "the office")]
+      readP_to_S verbMoveParser "went to the office" `shouldBe` [((), "the office")]
 
-  describe "verbParser" $ do
+  describe "verbMoveParser" $ do
     it "should return empty tuple i.e. work with the word journeyed" $
-      readP_to_S verbParser "journeyed to the office" `shouldBe` [((), "the office")]
+      readP_to_S verbMoveParser "journeyed to the office" `shouldBe` [((), "the office")]
 
-  describe "verbParser" $ do
+  describe "verbMoveParser" $ do
     it "should return empty tuple i.e. work with the word travelled" $
-      readP_to_S verbParser "travelled to the school" `shouldBe` [((), "the school")]
+      readP_to_S verbMoveParser "travelled to the school" `shouldBe` [((), "the school")]
 
-  describe "verbParser" $ do
+  describe " verbGetObjectParser" $ do
     it "should return empty tuple i.e. work with the word took" $
-      readP_to_S verbParser "took the football" `shouldBe` [((), "the football")]
+      readP_to_S verbGetObjectParser "took the football" `shouldBe` [((), "the football")]
 
   describe "locationParser" $ do
     it "should return school as the location" $
@@ -64,6 +64,10 @@ main = hspec $ do
     it "returns the object someone has" $
       readP_to_S objectParser "the football" `shouldBe` [(Object { objectName = "football" } , "")]
 
-  describe "takingObjectParser" $ do
+  describe "gettingObjectParser" $ do
     it "returns the name Mary and football as the object" $
-      readP_to_S takingObjectParser "Mary took the football" `shouldBe` [(Person {name = "Mary", location = Nothing, object = Just (Object { objectName = "football"}) }, "")]
+      readP_to_S gettingObjectParser "Mary took the football" `shouldBe` [(Person {name = "Mary", location = Nothing, object = Just (Object { objectName = "football"}) }, "")]
+
+  describe "gettingObjectParser" $ do
+    it "returns the name Mary and apple as the object" $
+      readP_to_S gettingObjectParser "Mary got the apple" `shouldBe` [(Person {name = "Mary", location = Nothing, object = Just (Object { objectName = "apple"}) }, "")]
