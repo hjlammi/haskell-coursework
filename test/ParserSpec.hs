@@ -4,6 +4,7 @@ import Text.ParserCombinators.ReadP
 import Test.Hspec
 import Parser
 import Person
+import Object
 
 main :: IO ()
 main = hspec $ do
@@ -53,8 +54,16 @@ main = hspec $ do
 
   describe "movementParser" $ do
     it "returns the name John and the current place office" $
-      readP_to_S movementParser "John moved to the office" `shouldBe` [(Person {name = "John", location = Just "office"}, "")]
+      readP_to_S movementParser "John moved to the office" `shouldBe` [(Person { name = "John", location = Just "office", object = Nothing }, "")]
 
   describe "movementParser" $ do
     it "returns the name Daniel and the current place bedroom" $
-      readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(Person {name = "Daniel", location = Just "bedroom"}, "")]
+      readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(Person { name = "Daniel", location = Just "bedroom", object = Nothing }, "")]
+
+  describe "objectParser" $ do
+    it "returns the object someone has" $
+      readP_to_S objectParser "the football" `shouldBe` [(Object { objectName = "football" } , "")]
+
+  describe "takingObjectParser" $ do
+    it "returns the name Mary and football as the object" $
+      readP_to_S takingObjectParser "Mary took the football" `shouldBe` [(Person {name = "Mary", location = Nothing, object = Just (Object { objectName = "football"}) }, "")]

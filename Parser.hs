@@ -1,13 +1,21 @@
 module Parser where
 import Text.ParserCombinators.ReadP
 import Person
+import Object
 
 movementParser :: ReadP Person
 movementParser = do
   name <- nameParser
   verb <- verbParser
   location <-locationParser
-  return Person { name = name, location = (Just location) }
+  return Person { name = name, location = (Just location), object = Nothing }
+
+takingObjectParser :: ReadP Person
+takingObjectParser = do
+  name <- nameParser
+  verb <- verbParser
+  object <- objectParser
+  return Person { name = name, location = Nothing, object = Just object }
 
 nameParser :: ReadP String
 nameParser = do
@@ -42,6 +50,14 @@ locationParser = do
   location <- readSubStr
   eof
   return location
+
+objectParser :: ReadP Object
+objectParser = do
+  string "the"
+  satisfy (== ' ')
+  object <- readSubStr
+  eof
+  return Object { objectName = object }
 
 readSubStr :: ReadP String
 readSubStr = many1 $ satisfy (\char -> char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z')
