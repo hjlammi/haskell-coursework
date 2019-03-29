@@ -3,6 +3,10 @@ import Text.ParserCombinators.ReadP
 import Person
 import Object
 
+mainParser :: String -> Person
+mainParser str = do
+  fst $ head $ readP_to_S movementParser str
+
 movementParser :: ReadP Person
 movementParser = do
   name <- nameParser

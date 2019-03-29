@@ -71,3 +71,7 @@ main = hspec $ do
   describe "gettingObjectParser" $ do
     it "returns the name Mary and apple as the object" $
       readP_to_S gettingObjectParser "Mary got the apple" `shouldBe` [(Person {name = "Mary", location = Nothing, object = Just (Object { objectName = "apple"}) }, "")]
+
+  describe "mainParser" $ do
+    it "returns the name Mary and bedroom as the current place" $
+      mainParser "Mary journeyed to the bedroom" `shouldBe` (Person { name = "Mary", location = Just "bedroom", object = Nothing })
