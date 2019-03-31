@@ -2,10 +2,11 @@ module Parser where
 import Text.ParserCombinators.ReadP
 import Person
 import Object
+import Data
 
-mainParser :: String -> Person
+mainParser :: String -> Data
 mainParser str = do
-  fst $ head $ readP_to_S movementParser str
+  Data { person = fst $ head $ readP_to_S movementParser str } 
 
 movementParser :: ReadP Person
 movementParser = do

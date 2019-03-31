@@ -6,4 +6,5 @@ main = do
   args <- getArgs
   let fileName = head args in do
     contents <- readFile fileName
-    putStr contents
+    let linesOfFiles = lines contents in do
+      mapM_ putStrLn linesOfFiles

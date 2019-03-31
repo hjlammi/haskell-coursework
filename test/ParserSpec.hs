@@ -5,6 +5,7 @@ import Test.Hspec
 import Parser
 import Person
 import Object
+import Data
 
 main :: IO ()
 main = hspec $ do
@@ -60,6 +61,10 @@ main = hspec $ do
     it "returns the name Daniel and the current place bedroom" $
       readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(Person { name = "Daniel", location = Just "bedroom", object = Nothing }, "")]
 
+  -- describe "movementParser" $ do
+  --   it "doesn't return anything" $
+  --     readP_to_S movementParser "The garden is south of the bedroom" `shouldBe` [(Person { name = Nothing, location = Just "bedroom", object = Nothing }, "")]
+
   describe "objectParser" $ do
     it "returns the object someone has" $
       readP_to_S objectParser "the football" `shouldBe` [(Object { objectName = "football" } , "")]
@@ -74,4 +79,4 @@ main = hspec $ do
 
   describe "mainParser" $ do
     it "returns the name Mary and bedroom as the current place" $
-      mainParser "Mary journeyed to the bedroom" `shouldBe` (Person { name = "Mary", location = Just "bedroom", object = Nothing })
+      mainParser "Mary journeyed to the bedroom" `shouldBe` (Data { person = Person { name = "Mary", location = Just "bedroom", object = Nothing }})
