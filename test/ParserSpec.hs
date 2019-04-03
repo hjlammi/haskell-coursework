@@ -61,9 +61,9 @@ main = hspec $ do
     it "returns the name Daniel and the current place bedroom" $
       readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(Person { name = "Daniel", location = Just "bedroom", object = Nothing }, "")]
 
-  -- describe "movementParser" $ do
-  --   it "doesn't return anything" $
-  --     readP_to_S movementParser "The garden is south of the bedroom" `shouldBe` [(Person { name = Nothing, location = Just "bedroom", object = Nothing }, "")]
+  describe "movementParser" $ do
+    it "doesn't return anything" $
+      readP_to_S movementParser "The garden is south of the bedroom" `shouldBe` []
 
   describe "objectParser" $ do
     it "returns the object someone has" $

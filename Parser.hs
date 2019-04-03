@@ -70,7 +70,7 @@ objectParser = do
   return Object { objectName = object }
 
 readSubStr :: ReadP String
-readSubStr = many1 $ satisfy (\char -> char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z')
+readSubStr = munch (\char -> char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z')
 
 isInList :: String -> [String] -> Bool
 isInList word words
