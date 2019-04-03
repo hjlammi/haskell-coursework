@@ -9,6 +9,10 @@ mainParser :: String -> Data
 mainParser str = do
   Data { person = fst $ head $ readP_to_S movementParser str }
 
+qParser :: String -> QuestionData
+qParser question = do
+  fst $ head $ readP_to_S questionParser question
+
 questionParser :: ReadP QuestionData
 questionParser = do
   q <- readSubStr
