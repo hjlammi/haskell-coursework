@@ -3,10 +3,27 @@ import Text.ParserCombinators.ReadP
 import Person
 import Object
 import Data
+import QuestionData
 
 mainParser :: String -> Data
 mainParser str = do
-  Data { person = fst $ head $ readP_to_S movementParser str } 
+  Data { person = fst $ head $ readP_to_S movementParser str }
+
+questionParser :: ReadP QuestionData
+questionParser = do
+  q <- readSubStr
+  if q == "Is"
+    then do
+      satisfy (== ' ')
+      name <- nameParser
+      string "in"
+      satisfy (== ' ')
+      location <- locationParser
+      string " ?"
+      return QuestionData { p = Person { name = name, location = Just location, object = Nothing } }
+    else
+      pfail
+
 
 movementParser :: ReadP Person
 movementParser = do
