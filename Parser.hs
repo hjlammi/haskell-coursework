@@ -12,7 +12,8 @@ movementParser :: ReadP Person
 movementParser = do
   name <- nameParser
   verb <- verbMoveParser
-  location <-locationParser
+  location <- locationParser
+  eof
   return Person { name = name, location = (Just location), object = Nothing }
 
 gettingObjectParser :: ReadP Person
@@ -58,7 +59,6 @@ locationParser = do
   string "the"
   satisfy (== ' ')
   location <- readSubStr
-  eof
   return location
 
 objectParser :: ReadP Object
