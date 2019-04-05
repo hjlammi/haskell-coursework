@@ -11,9 +11,9 @@ main = do
   let fileName = head args in do
     contents <- readFile fileName
     let linesOfFile = lines contents in do
-      let parsedData = mainParser $ head linesOfFile in do
+      let parsedData = readLinesToData linesOfFile in do
         question <- getLine
-        let answer = answerOne parsedData question in do
+        let answer = answerOne (head parsedData) question in do
           print answer
 
 
@@ -24,3 +24,8 @@ answerOne parsedData question =
       then "yes"
     else
       "no"
+
+readLinesToData :: [String] -> [Data]
+readLinesToData [] = []
+readLinesToData (line:[]) = [mainParser $ line]
+readLinesToData (line:lines) = (mainParser $ line) : (readLinesToData lines)
