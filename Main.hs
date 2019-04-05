@@ -12,7 +12,9 @@ main = do
     contents <- readFile fileName
     let linesOfFile = lines contents in do
       let parsedData = mainParser $ head linesOfFile in do
-        print parsedData
+        question <- getLine
+        let answer = answerOne parsedData question in do
+          print answer
 
 
 answerOne :: Data -> String -> String
