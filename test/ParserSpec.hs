@@ -6,7 +6,6 @@ import Parser
 import Person
 import Object
 import Data
-import QuestionData
 
 main :: IO ()
 main = hspec $ do
@@ -83,5 +82,5 @@ main = hspec $ do
       mainParser "Mary journeyed to the bedroom" `shouldBe` (Data { person = Person { name = "Mary", location = Just "bedroom", object = Nothing }})
 
   describe "questionParser" $ do
-    it "returns QuestionData with the Person named Mary in the location kitchen" $
-      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(QuestionData {p = Person {name = "Mary", location = Just "kitchen", object = Nothing }}, "")]
+    it "returns Data with the Person named Mary in the location kitchen" $
+      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(Data {person = Person {name = "Mary", location = Just "kitchen", object = Nothing }}, "")]

@@ -3,6 +3,7 @@ module Main where
 import System.IO
 import System.Environment
 import Parser
+import Data
 
 main :: IO ()
 main = do
@@ -14,7 +15,7 @@ main = do
         print parsedData
 
 
--- answerOne :: String -> String -> String
+answerOne :: Data -> String -> String
 answerOne parsedData question =
   let parsedQuestion = qParser question in do
     if parsedQuestion == parsedData
