@@ -12,7 +12,7 @@ main = do
   let fileName = head args in do
     contents <- readFile fileName
     let linesOfFile = lines contents in do
-      let parsedData = readLinesToData linesOfFile [] in do
+      let parsedData = readLinesToData linesOfFile in do
         question <- getLine
         let answer = answerOne (head parsedData) question in do
           print answer
@@ -26,12 +26,10 @@ answerOne parsedData question =
     else
       "no"
 
-readLinesToData :: [String] -> [Data] -> [Data]
-readLinesToData [] [] = []
-readLinesToData (line:[]) [] = [mainParser $ line]
-readLinesToData (line:lines) dataList
-  | elem (mainParser $ line) dataList = replace dataList (mainParser $ line)
-  | otherwise = (mainParser $ line) : (readLinesToData lines dataList)
+readLinesToData :: [String] -> [Data]
+readLinesToData [] = []
+readLinesToData (line:[]) = [mainParser $ line]
+readLinesToData (line:lines) = (mainParser $ line) : (readLinesToData lines)
 
 replace :: [Data] -> Data -> [Data]
 replace [] dataRecord = [dataRecord]

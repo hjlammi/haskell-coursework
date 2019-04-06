@@ -35,16 +35,12 @@ main = hspec $ do
 
   describe "readLinesToData" $ do
     it "returns an empty list if input is an empty list" $
-      Main.readLinesToData [] [] `shouldBe` []
+      Main.readLinesToData [] `shouldBe` []
 
   describe "readLinesToData" $ do
     it "returns a list of one Data element formed from input of one line" $
-      Main.readLinesToData ["John moved to the office"] [] `shouldBe` [Data $ Person "John" (Just "office") Nothing]
+      Main.readLinesToData ["John moved to the office"] `shouldBe` [Data $ Person "John" (Just "office") Nothing]
 
   describe "readLinesToData" $ do
     it "returns a list of two Data element formed from input of two lines" $
-      Main.readLinesToData ["John moved to the office", "Daniel journeyed to the bedroom"] [] `shouldBe` [Data $ Person "John" (Just "office") Nothing, Data $ Person "Daniel" (Just "bedroom") Nothing]
-
-  -- describe "readLinesToData" $ do
-  --   it "returns a list of one Data element formed from input of one line" $
-  --     Main.readLinesToData ["John moved to the office", "John went to the bedroom"] [] `shouldBe` [Data {person = Person {name = "John", location = Just "bedroom", object = Nothing}}]
+      Main.readLinesToData ["John moved to the office", "Daniel journeyed to the bedroom", "John went to the bedroom"] `shouldBe` [Data $ Person "John" (Just "office") Nothing, Data $ Person "Daniel" (Just "bedroom") Nothing, Data $ Person "John" (Just "bedroom") Nothing]
