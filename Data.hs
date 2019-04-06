@@ -3,5 +3,5 @@ import Object
 import Person
 
 data Data = Data {
-                    person :: Person
+                    persons :: [Person]
                  } deriving (Show, Eq)

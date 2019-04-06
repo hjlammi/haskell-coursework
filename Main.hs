@@ -31,8 +31,12 @@ readLinesToData [] = []
 readLinesToData (line:[]) = [mainParser $ line]
 readLinesToData (line:lines) = (mainParser $ line) : (readLinesToData lines)
 
-replace :: [Data] -> Data -> [Data]
-replace [] dataRecord = [dataRecord]
-replace (dataElem:datas) dataRecord
-  | (name $ person dataRecord) == (name $ person dataElem) = dataRecord : datas
-  | otherwise                                              = dataElem : replace datas dataRecord
+-- replace :: [Data] -> [Data]
+-- replace [] = []
+-- replace [dataElem] = [dataElem]
+-- replace (dataElem:rest)
+--   | (name $ person dataElem) == (name $ person $ head rest) = rest
+--   | otherwise = dataElem : replace rest
+-- replace (dataElem:datas) dataRecord
+--   | (name $ person dataRecord) == (name $ person dataElem) = dataRecord : datas
+--   | otherwise                                              = dataElem : replace datas dataRecord

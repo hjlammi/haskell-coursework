@@ -6,7 +6,7 @@ import Data
 
 mainParser :: String -> Data
 mainParser str = do
-  Data { person = fst $ head $ readP_to_S movementParser str }
+  Data [fst $ head $ readP_to_S movementParser str]
 
 qParser :: String -> Data
 qParser question = do
@@ -23,7 +23,7 @@ questionParser = do
       satisfy (== ' ')
       location <- locationParser
       string " ?"
-      return (Data $ Person name (Just location) Nothing)
+      return (Data [Person name (Just location) Nothing])
     else
       pfail
 

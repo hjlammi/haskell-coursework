@@ -79,8 +79,8 @@ main = hspec $ do
 
   describe "mainParser" $ do
     it "returns the name Mary and bedroom as the current place" $
-      mainParser "Mary journeyed to the bedroom" `shouldBe` (Data $ Person "Mary" (Just "bedroom") Nothing)
+      mainParser "Mary journeyed to the bedroom" `shouldBe` (Data [Person "Mary" (Just "bedroom") Nothing])
 
   describe "questionParser" $ do
     it "returns Data with the Person named Mary in the location kitchen" $
-      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(Data $ Person "Mary" (Just "kitchen") Nothing, "")]
+      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(Data [Person "Mary" (Just "kitchen") Nothing], "")]
