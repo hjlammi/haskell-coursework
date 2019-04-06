@@ -12,26 +12,22 @@ main :: IO ()
 main = hspec $ do
 
 -- answerOne
-  describe "answerOne" $ do
-    it "answers yes when asked if Mary is in the kitchen" $
-      Main.answerOne (Data [Person "Mary" (Just "kitchen") Nothing]) "Is Mary in the kitchen ?" `shouldBe` "yes"
+  -- describe "answerOne" $ do
+  --   it "answers yes when asked if Mary is in the kitchen" $
+  --     Main.answerOne (Data [Person "Mary" (Just "kitchen") Nothing]) "Is Mary in the kitchen ?" `shouldBe` "yes"
+  --
+  -- describe "answerOne" $ do
+  --   it "answers no when asked if Mary is in the garden" $
+  --     Main.answerOne (Data [Person "Mary" (Just "kitchen") Nothing]) "Is Mary in the garden ?" `shouldBe` "no"
 
-  describe "answerOne" $ do
-    it "answers no when asked if Mary is in the garden" $
-      Main.answerOne (Data [Person "Mary" (Just "kitchen") Nothing]) "Is Mary in the garden ?" `shouldBe` "no"
+-- parseLine
+  describe "parseLine" $ do
+    it "returns a list of one PersonMovesFact formed from input of one line" $
+      Main.parseLine "John moved to the office" `shouldBe` (PersonMovesFact $ PersonMoves "John" "office")
 
--- -- readLinesToData
---   describe "readLinesToData" $ do
---     it "returns an empty list if input is an empty list" $
---       Main.readLinesToData [] `shouldBe` []
---
---   describe "readLinesToData" $ do
---     it "returns a list of one Data element formed from input of one line" $
---       Main.readLinesToData ["John moved to the office"] `shouldBe` [Data [Person "John" (Just "office") Nothing]
---
---   describe "readLinesToData" $ do
---     it "returns a list of two Data element formed from input of two lines" $
---       Main.readLinesToData ["John moved to the office", "Daniel journeyed to the bedroom", "John went to the bedroom"] `shouldBe` [Data $ Person "John" (Just "office") Nothing, Data $ Person "Daniel" (Just "bedroom") Nothing, Data $ Person "John" (Just "bedroom") Nothing]
+  -- describe "parseLine" $ do
+  --   it "returns a list of two Data element formed from input of two lines" $
+  --     Main.parseLines ["John moved to the office", "Daniel journeyed to the bedroom", "John went to the bedroom"] `shouldBe` [Data $ Person "John" (Just "office") Nothing, Data $ Person "Daniel" (Just "bedroom") Nothing, Data $ Person "John" (Just "bedroom") Nothing]
 
 -- -- replace
 --   describe "replace" $ do

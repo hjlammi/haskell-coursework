@@ -11,25 +11,25 @@ main = do
   args <- getArgs
   let fileName = head args in do
     contents <- readFile fileName
-    let linesOfFile = lines contents in do
-      let parsedData = readLinesToData linesOfFile in do
+    let facts = lines contents in do
+      let parsedFact = parseLine $ head facts in do
         question <- getLine
-        let answer = answerOne (head parsedData) question in do
-          print answer
+        return ()
+        -- let answer = answerOne parsedFact question in do
+          -- print answer
 
 
-answerOne :: Data -> String -> String
-answerOne parsedData question =
-  let parsedQuestion = qParser question in do
-    if parsedQuestion == parsedData
-      then "yes"
-    else
-      "no"
+-- answerOne :: Fact -> String -> String
+-- answerOne parsedData question =
+--   let parsedQuestion = qParser question in do
+--     if parsedQuestion == parsedData
+--       then "yes"
+--     else
+--       "no"
 
-readLinesToData :: [String] -> [Data]
-readLinesToData [] = []
-readLinesToData (line:[]) = [mainParser $ line]
-readLinesToData (line:lines) = (mainParser $ line) : (readLinesToData lines)
+parseLine :: String -> Fact
+parseLine line = parse $ line
+-- parseLine (line:lines) = (parse $ line) : (parseLine lines)
 
 -- replace :: [Data] -> [Data]
 -- replace [] = []

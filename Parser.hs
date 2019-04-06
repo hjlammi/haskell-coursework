@@ -4,9 +4,9 @@ import Person
 import Object
 import Data
 
-mainParser :: String -> Data
-mainParser str = do
-  Data [fst $ head $ readP_to_S movementParser str]
+parse :: String -> Fact
+parse str = do
+  PersonMovesFact $ fst $ head $ readP_to_S movementParser str
 
 qParser :: String -> Data
 qParser question = do
@@ -28,13 +28,13 @@ questionParser = do
       pfail
 
 
-movementParser :: ReadP Person
+movementParser :: ReadP PersonMoves
 movementParser = do
   name <- nameParser
   verb <- verbMoveParser
   location <- locationParser
   eof
-  return (Person name (Just location) Nothing)
+  return (PersonMoves name location)
 
 gettingObjectParser :: ReadP Person
 gettingObjectParser = do
