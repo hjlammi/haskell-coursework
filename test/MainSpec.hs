@@ -14,24 +14,24 @@ main = hspec $ do
 -- answerOne
   describe "answerOne" $ do
     it "answers yes when asked if Mary is in the kitchen" $
-      Main.answerOne Data {person = Person {name = "Mary", location = Just "kitchen", object = Nothing}} "Is Mary in the kitchen ?" `shouldBe` "yes"
+      Main.answerOne (Data  $ Person "Mary" (Just "kitchen") Nothing) "Is Mary in the kitchen ?" `shouldBe` "yes"
 
   describe "answerOne" $ do
     it "answers no when asked if Mary is in the garden" $
-      Main.answerOne Data {person = Person {name = "Mary", location = Just "kitchen", object = Nothing}} "Is Mary in the garden ?" `shouldBe` "no"
+      Main.answerOne (Data  $ Person "Mary" (Just "kitchen") Nothing) "Is Mary in the garden ?" `shouldBe` "no"
 
 -- replace
   describe "replace" $ do
     it "returns a list with a data item with the location of the person John as office" $
-      Main.replace [Data {person = Person {name = "John", location = Just "garden", object = Nothing}}] Data {person = Person {name = "John", location = Just "office", object = Nothing}} `shouldBe` [Data {person = Person {name = "John", location = Just "office", object = Nothing}}]
+      Main.replace [Data $ Person "John" (Just "garden") Nothing] (Data $ Person "John" (Just "office") Nothing) `shouldBe` [(Data $ Person "John" (Just "office") Nothing)]
 
   describe "replace" $ do
     it "changes the last data element in the list" $
-      Main.replace [Data {person = Person {name = "Mary", location = Just "garden", object = Nothing}}, Data {person = Person {name = "Lisa", location = Just "bathroom", object = Nothing}}, Data {person = Person {name = "John", location = Just "garden", object = Nothing}}] Data {person = Person {name = "John", location = Just "office", object = Nothing}} `shouldBe` [Data {person = Person {name = "Mary", location = Just "garden", object = Nothing}}, Data {person = Person {name = "Lisa", location = Just "bathroom", object = Nothing}}, Data {person = Person {name = "John", location = Just "office", object = Nothing}}]
+      Main.replace [Data $ Person "Mary" (Just "garden") Nothing, Data $ Person "John" (Just "garden") Nothing, Data $ Person "Lisa" (Just "bathroom") Nothing] (Data $ Person "John" (Just "office") Nothing) `shouldBe` [Data $ Person "Mary" (Just "garden") Nothing, Data $ Person "John" (Just "office") Nothing, Data $ Person "Lisa" (Just "bathroom") Nothing]
 
   describe "replace" $ do
-    it "changes the second data element in the list" $
-      Main.replace [Data {person = Person {name = "Mary", location = Just "garden", object = Nothing}}, Data {person = Person {name = "John", location = Just "garden", object = Nothing}}] Data {person = Person {name = "John", location = Just "office", object = Nothing}} `shouldBe` [Data {person = Person {name = "Mary", location = Just "garden", object = Nothing}}, Data {person = Person {name = "John", location = Just "office", object = Nothing}}]
+    it "changes the last data element in the list" $
+      Main.replace [Data $ Person "Mary" (Just "garden") Nothing, Data $ Person "Lisa" (Just "bathroom") Nothing, Data $ Person "John" (Just "garden") Nothing] (Data $ Person "John" (Just "office") Nothing) `shouldBe` [Data $ Person "Mary" (Just "garden") Nothing, Data $ Person "Lisa" (Just "bathroom") Nothing, Data $ Person "John" (Just "office") Nothing]
 
   describe "readLinesToData" $ do
     it "returns an empty list if input is an empty list" $
@@ -39,11 +39,11 @@ main = hspec $ do
 
   describe "readLinesToData" $ do
     it "returns a list of one Data element formed from input of one line" $
-      Main.readLinesToData ["John moved to the office"] [] `shouldBe` [Data {person = Person {name = "John", location = Just "office", object = Nothing}}]
+      Main.readLinesToData ["John moved to the office"] [] `shouldBe` [Data $ Person "John" (Just "office") Nothing]
 
   describe "readLinesToData" $ do
     it "returns a list of two Data element formed from input of two lines" $
-      Main.readLinesToData ["John moved to the office", "Daniel journeyed to the bedroom"] [] `shouldBe` [Data {person = Person {name = "John", location = Just "office", object = Nothing}}, Data {person = Person {name = "Daniel", location = Just "bedroom", object = Nothing}}]
+      Main.readLinesToData ["John moved to the office", "Daniel journeyed to the bedroom"] [] `shouldBe` [Data $ Person "John" (Just "office") Nothing, Data $ Person "Daniel" (Just "bedroom") Nothing]
 
   -- describe "readLinesToData" $ do
   --   it "returns a list of one Data element formed from input of one line" $

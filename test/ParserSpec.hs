@@ -55,11 +55,11 @@ main = hspec $ do
 
   describe "movementParser" $ do
     it "returns the name John and the current place office" $
-      readP_to_S movementParser "John moved to the office" `shouldBe` [(Person { name = "John", location = Just "office", object = Nothing }, "")]
+      readP_to_S movementParser "John moved to the office" `shouldBe` [(Person "John" (Just "office") Nothing, "")]
 
   describe "movementParser" $ do
     it "returns the name Daniel and the current place bedroom" $
-      readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(Person { name = "Daniel", location = Just "bedroom", object = Nothing }, "")]
+      readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(Person "Daniel" (Just "bedroom") Nothing, "")]
 
   describe "movementParser" $ do
     it "doesn't return anything" $
@@ -67,20 +67,20 @@ main = hspec $ do
 
   describe "objectParser" $ do
     it "returns the object someone has" $
-      readP_to_S objectParser "the football" `shouldBe` [(Object { objectName = "football" } , "")]
+      readP_to_S objectParser "the football" `shouldBe` [(Object "football", "")]
 
   describe "gettingObjectParser" $ do
     it "returns the name Mary and football as the object" $
-      readP_to_S gettingObjectParser "Mary took the football" `shouldBe` [(Person {name = "Mary", location = Nothing, object = Just (Object { objectName = "football"}) }, "")]
+      readP_to_S gettingObjectParser "Mary took the football" `shouldBe` [(Person "Mary" Nothing (Just (Object "football")), "")]
 
   describe "gettingObjectParser" $ do
     it "returns the name Mary and apple as the object" $
-      readP_to_S gettingObjectParser "Mary got the apple" `shouldBe` [(Person {name = "Mary", location = Nothing, object = Just (Object { objectName = "apple"}) }, "")]
+      readP_to_S gettingObjectParser "Mary got the apple" `shouldBe` [(Person "Mary" Nothing (Just (Object "apple")), "")]
 
   describe "mainParser" $ do
     it "returns the name Mary and bedroom as the current place" $
-      mainParser "Mary journeyed to the bedroom" `shouldBe` (Data { person = Person { name = "Mary", location = Just "bedroom", object = Nothing }})
+      mainParser "Mary journeyed to the bedroom" `shouldBe` (Data $ Person "Mary" (Just "bedroom") Nothing)
 
   describe "questionParser" $ do
     it "returns Data with the Person named Mary in the location kitchen" $
-      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(Data {person = Person {name = "Mary", location = Just "kitchen", object = Nothing }}, "")]
+      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(Data $ Person "Mary" (Just "kitchen") Nothing, "")]

@@ -23,7 +23,7 @@ questionParser = do
       satisfy (== ' ')
       location <- locationParser
       string " ?"
-      return Data { person = Person { name = name, location = Just location, object = Nothing } }
+      return (Data $ Person name (Just location) Nothing)
     else
       pfail
 
@@ -34,14 +34,14 @@ movementParser = do
   verb <- verbMoveParser
   location <- locationParser
   eof
-  return Person { name = name, location = (Just location), object = Nothing }
+  return (Person name (Just location) Nothing)
 
 gettingObjectParser :: ReadP Person
 gettingObjectParser = do
   name <- nameParser
   verb <- verbGetObjectParser
   object <- objectParser
-  return Person { name = name, location = Nothing, object = Just object }
+  return (Person name Nothing (Just object))
 
 nameParser :: ReadP String
 nameParser = do
