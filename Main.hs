@@ -5,6 +5,7 @@ import System.Environment
 import Parser
 import Data
 import Person
+import qualified Data.Map.Strict as Map
 
 main :: IO ()
 main = do
@@ -29,14 +30,10 @@ main = do
 
 parseLine :: String -> Fact
 parseLine line = parse $ line
--- parseLine (line:lines) = (parse $ line) : (parseLine lines)
 
--- replace :: [Data] -> [Data]
--- replace [] = []
--- replace [dataElem] = [dataElem]
--- replace (dataElem:rest)
---   | (name $ person dataElem) == (name $ person $ head rest) = rest
---   | otherwise = dataElem : replace rest
--- replace (dataElem:datas) dataRecord
---   | (name $ person dataRecord) == (name $ person dataElem) = dataRecord : datas
---   | otherwise                                              = dataElem : replace datas dataRecord
+updateData :: Data -> Fact -> Data
+updateData dataElem (PersonMovesFact f)  =
+  let name = personName f
+      location = personLocation f
+      updatedPerson = (Person name (Just location) Nothing)
+  in (Data $ Map.insert name updatedPerson $ persons dataElem)

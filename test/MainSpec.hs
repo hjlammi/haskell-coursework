@@ -7,6 +7,7 @@ import Parser
 import Person
 import Object
 import Data
+import qualified Data.Map.Strict as Map
 
 main :: IO ()
 main = hspec $ do
@@ -22,22 +23,27 @@ main = hspec $ do
 
 -- parseLine
   describe "parseLine" $ do
-    it "returns a list of one PersonMovesFact formed from input of one line" $
+    it "returns one PersonMovesFact formed from input of one line" $
       Main.parseLine "John moved to the office" `shouldBe` (PersonMovesFact $ PersonMoves "John" "office")
 
-  -- describe "parseLine" $ do
-  --   it "returns a list of two Data element formed from input of two lines" $
-  --     Main.parseLines ["John moved to the office", "Daniel journeyed to the bedroom", "John went to the bedroom"] `shouldBe` [Data $ Person "John" (Just "office") Nothing, Data $ Person "Daniel" (Just "bedroom") Nothing, Data $ Person "John" (Just "bedroom") Nothing]
+-- updateData
+  describe "updateData" $ do
+    it "returns an updated Data element in a Map with one person" $
+      let d = Data $ Map.fromList [("John", Person "John" (Just "kitchen") Nothing)]
+          fact = (PersonMovesFact $ PersonMoves "John" "office")
+          expected = Data $ Map.fromList [("John", Person "John" (Just "office") Nothing)] in
+      Main.updateData d fact `shouldBe` expected
 
--- -- replace
---   describe "replace" $ do
---     it "returns a list with a data item with the location of the person John as office" $
---       Main.replace [Data $ Person "John" (Just "garden") Nothing, Data $ Person "John" (Just "office") Nothing] `shouldBe` [(Data $ Person "John" (Just "office") Nothing)]
+  describe "updateData" $ do
+    it "updates person in the middle of the Map" $
+      let d = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing), ("John", Person "John" (Just "kitchen") Nothing), ("Lisa", Person "Lisa" (Just "garden") Nothing)]
+          fact = (PersonMovesFact $ PersonMoves "John" "office")
+          expected = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing), ("John", Person "John" (Just "office") Nothing), ("Lisa", Person "Lisa" (Just "garden") Nothing)] in
+      Main.updateData d fact `shouldBe` expected
 
-  -- describe "replace" $ do
-  --   it "removes the first elem of the list" $
-  --     Main.replace [Data $ Person "Mary" (Just "garden") Nothing, Data $ Person "John" (Just "garden") Nothing, Data $ Person "Mary" (Just "bathroom") Nothing] `shouldBe` [Data $ Person "John" (Just "garden") Nothing, Data $ Person "Mary" (Just "bathroom") Nothing]
-
-  -- describe "replace" $ do
-  --   it "changes the last data element in the list" $
-  --     Main.replace [Data $ Person "Mary" (Just "garden") Nothing, Data $ Person "Lisa" (Just "bathroom") Nothing, Data $ Person "John" (Just "garden") Nothing] (Data $ Person "John" (Just "office") Nothing) `shouldBe` [Data $ Person "Mary" (Just "garden") Nothing, Data $ Person "Lisa" (Just "bathroom") Nothing, Data $ Person "John" (Just "office") Nothing]
+  describe "updateData" $ do
+    it "updates last person in the Map" $
+      let d = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing), ("John", Person "John" (Just "kitchen") Nothing), ("Lisa", Person "Lisa" (Just "garden") Nothing)]
+          fact = (PersonMovesFact $ PersonMoves "John" "office")
+          expected = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing), ("John", Person "John" (Just "office") Nothing), ("Lisa", Person "Lisa" (Just "garden") Nothing)] in
+      Main.updateData d fact `shouldBe` expected
