@@ -60,15 +60,3 @@ main = hspec $ do
           fact = (PersonMovesFact $ PersonMoves "John" "office")
           expected = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing), ("John", Person "John" (Just "office") Nothing), ("Lisa", Person "Lisa" (Just "garden") Nothing)] in
       Main.updateData d fact `shouldBe` expected
-
-  -- describe "processFacts" $ do
-  --   it "processes one fact" $
-  --     let dataElem = Data $ Map.empty
-  --         expected = Data $ Map.fromList [("John", Person "John" (Just "office") Nothing)] in
-  --       Main.processFacts ["John moved to the office"] dataElem `shouldBe` expected
-  --
-  -- describe "processFacts" $ do
-  --   it "processes two facts" $
-  --     let dataElem = Data $ Map.empty
-  --         expected = Data $ Map.fromList [("John", Person "John" (Just "office") Nothing), ("Mary", Person "Mary" (Just "garden") Nothing)] in
-  --       Main.processFacts ["John moved to the office", "Mary went to the garden"] dataElem `shouldBe` expected

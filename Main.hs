@@ -31,10 +31,6 @@ updateData dataElem (PersonMovesFact f)  =
       updatedPerson = (Person name (Just location) Nothing)
   in (Data $ Map.insert name updatedPerson $ persons dataElem)
 
-processFacts facts dataElem =
-  let parsedLine = parseLine $ head facts in
-    updateData dataElem parsedLine
-
 -- answerOne :: Fact -> String -> String
 -- answerOne parsedData question =
 --   let parsedQuestion = qParser question in do
