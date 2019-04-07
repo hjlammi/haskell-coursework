@@ -9,9 +9,9 @@ parse :: String -> Fact
 parse str = do
   PersonMovesFact $ fst $ head $ readP_to_S movementParser str
 
--- qParser :: String -> Data
--- qParser question = do
---   fst $ head $ readP_to_S questionParser question
+parseQuestion :: String -> Question
+parseQuestion question = do
+  fst $ head $ readP_to_S questionParser question
 
 questionParser :: ReadP Question
 questionParser = do
