@@ -81,6 +81,6 @@ main = hspec $ do
     it "returns the name Mary and bedroom as the current place" $
       parse "Mary journeyed to the bedroom" `shouldBe` PersonMovesFact (PersonMoves "Mary" "bedroom")
 
-  -- describe "questionParser" $ do
-  --   it "returns Data with the Person named Mary in the location kitchen" $
-  --     readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(Data [Person "Mary" (Just "kitchen") Nothing], "")]
+  describe "questionParser" $ do
+    it "returns Data with the Person named Mary in the location kitchen" $
+      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(Question "Mary" "kitchen", "")]

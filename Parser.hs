@@ -13,20 +13,20 @@ parse str = do
 -- qParser question = do
 --   fst $ head $ readP_to_S questionParser question
 
--- questionParser :: ReadP Data
--- questionParser = do
---   q <- readSubStr
---   if q == "Is"
---     then do
---       satisfy (== ' ')
---       name <- nameParser
---       string "in"
---       satisfy (== ' ')
---       location <- locationParser
---       string " ?"
---       return (Data [Person name (Just location) Nothing])
---     else
---       pfail
+questionParser :: ReadP Question
+questionParser = do
+  q <- readSubStr
+  if q == "Is"
+    then do
+      satisfy (== ' ')
+      name <- nameParser
+      string "in"
+      satisfy (== ' ')
+      location <- locationParser
+      string " ?"
+      return (Question name location)
+    else
+      pfail
 
 
 movementParser :: ReadP PersonMoves

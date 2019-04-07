@@ -6,7 +6,7 @@ data Person =
     name :: String,
     location :: Maybe String,
     object :: Maybe Object
-   } deriving (Show, Eq)
+  } deriving (Show, Eq)
 
 data PersonMoves =
   PersonMoves {
