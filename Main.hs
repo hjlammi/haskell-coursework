@@ -12,13 +12,28 @@ main = do
   args <- getArgs
   let fileName = head args in do
     contents <- readFile fileName
-    let facts = lines contents in do
-      let parsedFact = parseLine $ head facts in do
-        question <- getLine
-        return ()
-        -- let answer = answerOne parsedFact question in do
-          -- print answer
+    let listOfLines = lines contents
+        listOfFacts = parseLines listOfLines
+        parsedData = foldl updateData (Data Map.empty) listOfFacts in do
+          print parsedData
 
+parseLine :: String -> Fact
+parseLine line = parse $ line
+
+parseLines :: [String] -> [Fact]
+parseLines lines =
+  map parseLine lines
+
+updateData :: Data -> Fact -> Data
+updateData dataElem (PersonMovesFact f)  =
+  let name = personName f
+      location = personLocation f
+      updatedPerson = (Person name (Just location) Nothing)
+  in (Data $ Map.insert name updatedPerson $ persons dataElem)
+
+processFacts facts dataElem =
+  let parsedLine = parseLine $ head facts in
+    updateData dataElem parsedLine
 
 -- answerOne :: Fact -> String -> String
 -- answerOne parsedData question =
@@ -27,13 +42,3 @@ main = do
 --       then "yes"
 --     else
 --       "no"
-
-parseLine :: String -> Fact
-parseLine line = parse $ line
-
-updateData :: Data -> Fact -> Data
-updateData dataElem (PersonMovesFact f)  =
-  let name = personName f
-      location = personLocation f
-      updatedPerson = (Person name (Just location) Nothing)
-  in (Data $ Map.insert name updatedPerson $ persons dataElem)
