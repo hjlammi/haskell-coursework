@@ -3,29 +3,30 @@ import Text.ParserCombinators.ReadP
 import Person
 import Object
 import Data
+import qualified Data.Map.Strict as Map
 
 parse :: String -> Fact
 parse str = do
   PersonMovesFact $ fst $ head $ readP_to_S movementParser str
 
-qParser :: String -> Data
-qParser question = do
-  fst $ head $ readP_to_S questionParser question
+-- qParser :: String -> Data
+-- qParser question = do
+--   fst $ head $ readP_to_S questionParser question
 
-questionParser :: ReadP Data
-questionParser = do
-  q <- readSubStr
-  if q == "Is"
-    then do
-      satisfy (== ' ')
-      name <- nameParser
-      string "in"
-      satisfy (== ' ')
-      location <- locationParser
-      string " ?"
-      return (Data [Person name (Just location) Nothing])
-    else
-      pfail
+-- questionParser :: ReadP Data
+-- questionParser = do
+--   q <- readSubStr
+--   if q == "Is"
+--     then do
+--       satisfy (== ' ')
+--       name <- nameParser
+--       string "in"
+--       satisfy (== ' ')
+--       location <- locationParser
+--       string " ?"
+--       return (Data [Person name (Just location) Nothing])
+--     else
+--       pfail
 
 
 movementParser :: ReadP PersonMoves
