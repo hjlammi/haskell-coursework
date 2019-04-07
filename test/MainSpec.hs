@@ -12,15 +12,6 @@ import qualified Data.Map.Strict as Map
 main :: IO ()
 main = hspec $ do
 
--- answerOne
-  -- describe "answerOne" $ do
-  --   it "answers yes when asked if Mary is in the kitchen" $
-  --     Main.answerOne (Data [Person "Mary" (Just "kitchen") Nothing]) "Is Mary in the kitchen ?" `shouldBe` "yes"
-  --
-  -- describe "answerOne" $ do
-  --   it "answers no when asked if Mary is in the garden" $
-  --     Main.answerOne (Data [Person "Mary" (Just "kitchen") Nothing]) "Is Mary in the garden ?" `shouldBe` "no"
-
 -- parseLine
   describe "parseLine" $ do
     it "returns one PersonMovesFact formed from input of one line" $
@@ -60,3 +51,14 @@ main = hspec $ do
           fact = (PersonMovesFact $ PersonMoves "John" "office")
           expected = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing), ("John", Person "John" (Just "office") Nothing), ("Lisa", Person "Lisa" (Just "garden") Nothing)] in
       Main.updateData d fact `shouldBe` expected
+
+  -- answerOne
+    describe "answerOne" $ do
+      it "answers yes when asked if Mary is in the kitchen" $
+        let d = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing)] in
+        Main.answerOne d "Is Mary in the kitchen ?" `shouldBe` "yes"
+
+    describe "answerOne" $ do
+      it "answers no when asked if Mary is in the garden" $
+        let d = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing)] in
+        Main.answerOne d "Is Mary in the garden ?" `shouldBe` "no"

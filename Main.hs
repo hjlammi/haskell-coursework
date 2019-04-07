@@ -15,7 +15,9 @@ main = do
     let listOfLines = lines contents
         listOfFacts = parseLines listOfLines
         parsedData = foldl updateData (Data Map.empty) listOfFacts in do
-          print parsedData
+        question <- getLine
+        let answer = answerOne parsedData question in do
+          print answer
 
 parseLine :: String -> Fact
 parseLine line = parse $ line
@@ -31,10 +33,13 @@ updateData dataElem (PersonMovesFact f)  =
       updatedPerson = (Person name (Just location) Nothing)
   in (Data $ Map.insert name updatedPerson $ persons dataElem)
 
--- answerOne :: Fact -> String -> String
--- answerOne parsedData question =
---   let parsedQuestion = qParser question in do
---     if parsedQuestion == parsedData
---       then "yes"
---     else
---       "no"
+answerOne :: Data -> String -> String
+answerOne parsedData question =
+  let parsedQuestion = parseQuestion question
+      maybePerson = Map.lookup (who parsedQuestion) (persons parsedData)
+  in case maybePerson of
+    Just person ->
+      if (location person) == Just (place parsedQuestion)
+      then "yes"
+      else "no"
+    Nothing -> "maybe"
