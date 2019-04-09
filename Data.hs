@@ -15,6 +15,6 @@ data Fact =
 
 data Question =
   Question {
-    who :: String,
+    subject :: String,
     place :: String
   } deriving (Show, Eq)

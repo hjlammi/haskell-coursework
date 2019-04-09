@@ -43,7 +43,7 @@ updateData dataElem (PersonMovesFact f)  =
 answerOne :: Data -> String -> String
 answerOne parsedData question =
   let parsedQuestion = parseQuestion question
-      maybePerson = Map.lookup (who parsedQuestion) (persons parsedData)
+      maybePerson = Map.lookup (subject parsedQuestion) (persons parsedData)
   in case maybePerson of
     Just person ->
       if (location person) == Just (place parsedQuestion)
