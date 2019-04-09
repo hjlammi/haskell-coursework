@@ -2,6 +2,7 @@ module Main where
 
 import System.IO
 import System.Environment
+import Control.Monad
 import Parser
 import Data
 import Person
@@ -15,9 +16,15 @@ main = do
     let listOfLines = lines contents
         listOfFacts = parseLines listOfLines
         parsedData = foldl updateData (Data Map.empty) listOfFacts in do
-        question <- getLine
-        let answer = answerOne parsedData question in do
-          print answer
+        readQuestion parsedData
+
+readQuestion :: Data -> IO ()
+readQuestion parsedData = do
+  question <- getLine
+  when (question /= "quit") $ do
+    let answer = answerOne parsedData question in do
+      print answer
+      readQuestion parsedData
 
 parseLine :: String -> Fact
 parseLine line = parse $ line
