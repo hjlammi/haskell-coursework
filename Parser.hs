@@ -37,12 +37,12 @@ movementParser = do
   eof
   return (PersonMoves name location)
 
-gettingObjectParser :: ReadP Person
+gettingObjectParser :: ReadP PersonTakesObject
 gettingObjectParser = do
   name <- nameParser
   verb <- verbGetObjectParser
   object <- objectParser
-  return (Person name Nothing (Just object))
+  return (PersonTakesObject name object)
 
 nameParser :: ReadP String
 nameParser = do
@@ -82,13 +82,13 @@ locationParser = do
   location <- readSubStr
   return location
 
-objectParser :: ReadP Object
+objectParser :: ReadP String
 objectParser = do
   string "the"
   satisfy (== ' ')
   object <- readSubStr
   eof
-  return Object { objectName = object }
+  return object
 
 readSubStr :: ReadP String
 readSubStr = munch (\char -> char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z')

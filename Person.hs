@@ -5,11 +5,17 @@ data Person =
   Person {
     name :: String,
     location :: Maybe String,
-    object :: Maybe Object
+    object :: Maybe String
   } deriving (Show, Eq)
 
 data PersonMoves =
   PersonMoves {
     personName :: String,
     personLocation :: String
+  } deriving (Show, Eq)
+
+data PersonTakesObject =
+  PersonTakesObject {
+    personTakesObjectName :: String,
+    personTakesObjectObject :: String
   } deriving (Show, Eq)

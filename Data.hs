@@ -9,7 +9,9 @@ data Data =
   } deriving (Show, Eq)
 
 data Fact =
-  PersonMovesFact PersonMoves deriving (Show, Eq)
+  PersonMovesFact PersonMoves |
+  PersonTakesObjectFact PersonTakesObject
+  deriving (Show, Eq)
 
 data Question =
   Question {

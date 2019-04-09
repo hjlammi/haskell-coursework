@@ -67,15 +67,15 @@ main = hspec $ do
 
   describe "objectParser" $ do
     it "returns the object someone has" $
-      readP_to_S objectParser "the football" `shouldBe` [(Object "football", "")]
+      readP_to_S objectParser "the football" `shouldBe` [("football", "")]
 
   describe "gettingObjectParser" $ do
     it "returns the name Mary and football as the object" $
-      readP_to_S gettingObjectParser "Mary took the football" `shouldBe` [(Person "Mary" Nothing (Just (Object "football")), "")]
+      readP_to_S gettingObjectParser "Mary took the football" `shouldBe` [(PersonTakesObject "Mary" "football", "")]
 
   describe "gettingObjectParser" $ do
     it "returns the name Mary and apple as the object" $
-      readP_to_S gettingObjectParser "Mary got the apple" `shouldBe` [(Person "Mary" Nothing (Just (Object "apple")), "")]
+      readP_to_S gettingObjectParser "Mary got the apple" `shouldBe` [(PersonTakesObject "Mary" "apple", "")]
 
   describe "parse" $ do
     it "returns the name Mary and bedroom as the current place" $
