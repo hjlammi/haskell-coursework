@@ -16,16 +16,16 @@ parseQuestion question = do
 questionParser :: ReadP Question
 questionParser = do
   q <- readSubStr
-  if q == "Is"
-    then do
+  case q of
+    "Is" -> do
       satisfy (== ' ')
       name <- nameParser
       string "in"
       satisfy (== ' ')
       location <- locationParser
       string " ?"
-      return (Question name location)
-    else
+      return (Question name (Just location))
+    _ ->
       pfail
 
 

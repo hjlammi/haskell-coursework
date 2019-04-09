@@ -46,7 +46,7 @@ answerOne parsedData question =
       maybePerson = Map.lookup (subject parsedQuestion) (persons parsedData)
   in case maybePerson of
     Just person ->
-      if (location person) == Just (place parsedQuestion)
+      if (location person) == (place parsedQuestion)
       then "yes"
       else "no"
     Nothing -> "maybe"
