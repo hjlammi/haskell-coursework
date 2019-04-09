@@ -10,7 +10,7 @@ data Data =
 
 data Fact =
   PersonMovesFact PersonMoves |
-  PersonTakesObjectFact PersonTakesObject
+  PersonMovesObjectFact PersonMovesObject
   deriving (Show, Eq)
 
 data Question =

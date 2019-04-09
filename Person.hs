@@ -14,8 +14,8 @@ data PersonMoves =
     personLocation :: String
   } deriving (Show, Eq)
 
-data PersonTakesObject =
-  PersonTakesObject {
-    personTakesObjectName :: String,
-    personTakesObjectObject :: String
+data PersonMovesObject =
+  PersonMovesObject {
+    personMovesObjectName :: String,
+    personMovesObjectObject :: String
   } deriving (Show, Eq)

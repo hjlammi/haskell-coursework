@@ -71,11 +71,11 @@ main = hspec $ do
 
   describe "gettingObjectParser" $ do
     it "returns the name Mary and football as the object" $
-      readP_to_S gettingObjectParser "Mary took the football" `shouldBe` [(PersonTakesObject "Mary" "football", "")]
+      readP_to_S gettingObjectParser "Mary took the football" `shouldBe` [(PersonMovesObject "Mary" "football", "")]
 
   describe "gettingObjectParser" $ do
     it "returns the name Mary and apple as the object" $
-      readP_to_S gettingObjectParser "Mary got the apple" `shouldBe` [(PersonTakesObject "Mary" "apple", "")]
+      readP_to_S gettingObjectParser "Mary got the apple" `shouldBe` [(PersonMovesObject "Mary" "apple", "")]
 
   describe "parse" $ do
     it "returns the name Mary and bedroom as the current place" $
@@ -85,10 +85,14 @@ main = hspec $ do
     it "returns parsed question in a list" $
       readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(Question "Mary" (Just "kitchen"), "")]
 
+  describe "questionParser" $ do
+    it "returns parsed question with football as the subject" $
+      readP_to_S questionParser "Where is the football ?" `shouldBe` [(Question "football" Nothing, "")]
+
   describe "parseQuestion" $ do
-    it "returns parsed question" $
+    it "returns parsed question with Daniel as the subject and bedroom as the place" $
       parseQuestion "Is Daniel in the bedroom ?" `shouldBe` (Question "Daniel" (Just "bedroom"))
 
   describe "parseQuestion" $ do
-    it "returns parsed question" $
+    it "returns parsed question with football as the subject" $
       parseQuestion "Where is the football ?" `shouldBe` (Question "football" Nothing)

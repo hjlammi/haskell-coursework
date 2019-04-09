@@ -25,6 +25,12 @@ questionParser = do
       location <- locationParser
       string " ?"
       return (Question name (Just location))
+    "Where" -> do
+      satisfy (== ' ')
+      string "is the "
+      object <- readSubStr
+      string " ?"
+      return (Question object Nothing)
     _ ->
       pfail
 
@@ -37,12 +43,12 @@ movementParser = do
   eof
   return (PersonMoves name location)
 
-gettingObjectParser :: ReadP PersonTakesObject
+gettingObjectParser :: ReadP PersonMovesObject
 gettingObjectParser = do
   name <- nameParser
   verb <- verbGetObjectParser
   object <- objectParser
-  return (PersonTakesObject name object)
+  return (PersonMovesObject name object)
 
 nameParser :: ReadP String
 nameParser = do
