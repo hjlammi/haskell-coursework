@@ -5,7 +5,7 @@ import System.Environment
 import Control.Monad
 import Parser
 import Data
-import Person
+import qualified Person as Person
 import Object
 import qualified Data.Map.Strict as Map
 
@@ -37,24 +37,24 @@ parseLines lines =
 
 updateData :: Data -> Fact -> Data
 updateData dataElem (PersonMovesFact f) =
-  let name = personName f
-      location = personLocation f
-      updatedPerson = (Person name (Just location) Nothing)
+  let name = Person.personName f
+      location = Person.personLocation f
+      updatedPerson = (Person.Person name (Just location) [])
   in (Data (Map.insert name updatedPerson $ persons dataElem) (objects dataElem))
 
 updateData dataElem (PersonTakesObjectFact f) =
-  let name = personTakesObjectName f
-      object = personTakesObjectObject f
+  let name = Person.personTakesObjectName f
+      object = Person.personTakesObjectObject f
       maybePerson = Map.lookup name (persons dataElem)
   in case maybePerson of
       Just person ->
-        let loc = location person
-            updatedPerson = (Person name loc (Just object))
+        let loc = Person.location person
+            updatedPerson = (Person.Person name loc [object])
         in (Data (Map.insert name updatedPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just name) Nothing) $ objects dataElem))
       Nothing ->
-        let newName = personTakesObjectName f
-            newObject = personTakesObjectObject f
-            newPerson = (Person newName Nothing (Just object))
+        let newName = Person.personTakesObjectName f
+            newObject = Person.personTakesObjectObject f
+            newPerson = (Person.Person newName Nothing [object])
         in (Data (Map.insert newName newPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newName) Nothing) $ objects dataElem))
 
 
@@ -66,7 +66,7 @@ answerOne parsedData question =
       let maybePerson = Map.lookup (subject pq) (persons parsedData)
       in case maybePerson of
         Just person ->
-          if (location person) == (place pq)
+          if (Person.location person) == (place pq)
           then "yes"
           else "no"
         Nothing -> "maybe"
@@ -84,7 +84,7 @@ answerOne parsedData question =
                     let maybePerson = Map.lookup personName (persons parsedData)
                     in case maybePerson of
                       Just person ->
-                        let maybeLocation = location person
+                        let maybeLocation = Person.location person
                         in case maybeLocation of
                           Just location -> location
                           Nothing -> "don't know1"
