@@ -28,7 +28,7 @@ main = hspec $ do
 
   describe "parseLines" $ do
     it "parses a list of two lines into a list of two facts" $
-      Main.parseLines ["Mary journeyed to the bedroom", "Mary took the football"] `shouldBe` [(PersonMovesFact $ PersonMoves "Mary" "bedroom"), (PersonMovesObjectFact $ PersonMovesObject "Mary" "football")]
+      Main.parseLines ["Mary journeyed to the bedroom", "Mary took the football"] `shouldBe` [(PersonMovesFact $ PersonMoves "Mary" "bedroom"), (PersonTakesObjectFact $ PersonTakesObject "Mary" "football")]
 
   describe "parseLines" $ do
     it "parses a list of three lines into a list of three facts" $

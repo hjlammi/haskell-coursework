@@ -55,11 +55,11 @@ main = hspec $ do
 
   describe "movementParser" $ do
     it "returns the name John and the current place office" $
-      readP_to_S movementParser "John moved to the office" `shouldBe` [(PersonMoves "John" "office", "")]
+      readP_to_S movementParser "John moved to the office" `shouldBe` [(PersonMovesFact $ PersonMoves "John" "office", "")]
 
   describe "movementParser" $ do
     it "returns the name Daniel and the current place bedroom" $
-      readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(PersonMoves "Daniel" "bedroom", "")]
+      readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(PersonMovesFact $ PersonMoves "Daniel" "bedroom", "")]
 
   describe "movementParser" $ do
     it "doesn't return anything" $
@@ -69,13 +69,13 @@ main = hspec $ do
     it "returns the object someone has" $
       readP_to_S objectParser "the football" `shouldBe` [("football", "")]
 
-  describe "gettingObjectParser" $ do
+  describe "takingObjectParser" $ do
     it "returns the name Mary and football as the object" $
-      readP_to_S gettingObjectParser "Mary took the football" `shouldBe` [(PersonMovesObject "Mary" "football", "")]
+      readP_to_S takingObjectParser "Mary took the football" `shouldBe` [(PersonTakesObjectFact $ PersonTakesObject "Mary" "football", "")]
 
-  describe "gettingObjectParser" $ do
+  describe "takingObjectParser" $ do
     it "returns the name Mary and apple as the object" $
-      readP_to_S gettingObjectParser "Mary got the apple" `shouldBe` [(PersonMovesObject "Mary" "apple", "")]
+      readP_to_S takingObjectParser "Mary got the apple" `shouldBe` [(PersonTakesObjectFact $ PersonTakesObject "Mary" "apple", "")]
 
   describe "parse" $ do
     it "returns the name Mary and bedroom as the current place" $

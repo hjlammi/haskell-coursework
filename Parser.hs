@@ -35,20 +35,20 @@ questionParser = do
       pfail
 
 
-movementParser :: ReadP PersonMoves
+movementParser :: ReadP Fact
 movementParser = do
   name <- nameParser
   verb <- verbMoveParser
   location <- locationParser
   eof
-  return (PersonMoves name location)
+  return (PersonMovesFact $ PersonMoves name location)
 
-gettingObjectParser :: ReadP PersonMovesObject
-gettingObjectParser = do
+takingObjectParser :: ReadP Fact
+takingObjectParser = do
   name <- nameParser
   verb <- verbGetObjectParser
   object <- objectParser
-  return (PersonMovesObject name object)
+  return (PersonTakesObjectFact $ PersonTakesObject name object)
 
 nameParser :: ReadP String
 nameParser = do
