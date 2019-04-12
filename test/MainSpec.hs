@@ -76,3 +76,10 @@ main = hspec $ do
       it "returns hallway as the location for football" $
         let d = Data Map.empty (Map.fromList [("football", Object $ ObjectLocation Nothing (Just "hallway"))]) in
         Main.answerOne d "Where is the football ?" `shouldBe` "hallway"
+
+    describe "answerOne" $ do
+      it "returns kitchen as the location for football that John has" $
+        let d = Data
+                (Map.fromList [("John", Person "John" (Just "kitchen") Nothing)])
+                (Map.fromList [("football", Object $ ObjectLocation (Just "John") Nothing)]) in
+        Main.answerOne d "Where is the football ?" `shouldBe` "kitchen"

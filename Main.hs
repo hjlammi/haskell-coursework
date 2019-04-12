@@ -65,6 +65,17 @@ answerOne parsedData question =
         Just object ->
           let maybeInLocation = inLocation $ objectLocation object
           in case maybeInLocation of
-            Just location -> location
-            Nothing -> "don't know"
+              Just location -> location
+              Nothing ->
+                let maybeOnPerson = onPerson $ objectLocation object
+                in case maybeOnPerson of
+                  Just personName ->
+                    let maybePerson = Map.lookup personName (persons parsedData)
+                    in case maybePerson of
+                      Just person ->
+                        let maybeLocation = location person
+                        in case maybeLocation of
+                          Just location -> location
+                          Nothing -> "don't know"
+                      Nothing -> "maybe"
         Nothing -> "don't know"
