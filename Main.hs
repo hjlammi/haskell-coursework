@@ -49,7 +49,8 @@ updateData dataElem (PersonTakesObjectFact f) =
   in case maybePerson of
       Just person ->
         let loc = Person.location person
-            updatedPerson = (Person.Person name loc [object])
+            objs = Person.objects person
+            updatedPerson = (Person.Person name loc (objs ++ [object]))
         in (Data (Map.insert name updatedPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just name) Nothing) $ objects dataElem))
       Nothing ->
         let newName = Person.personTakesObjectName f
