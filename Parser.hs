@@ -1,13 +1,13 @@
 module Parser where
 import Text.ParserCombinators.ReadP
+import Control.Applicative
 import Person
 import Object
 import Data
 import qualified Data.Map.Strict as Map
 
 parse :: String -> Fact
-parse str = do
-  PersonMovesFact $ fst $ head $ readP_to_S movementParser str
+parse str = fst $ head $ readP_to_S (movementParser <|> takingObjectParser) str
 
 parseQuestion :: String -> Question
 parseQuestion question = do

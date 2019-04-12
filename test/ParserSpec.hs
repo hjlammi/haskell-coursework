@@ -79,7 +79,11 @@ main = hspec $ do
 
   describe "parse" $ do
     it "returns the name Mary and bedroom as the current place" $
-      parse "Mary journeyed to the bedroom" `shouldBe` PersonMovesFact (PersonMoves "Mary" "bedroom")
+      parse "Mary journeyed to the bedroom" `shouldBe` (PersonMovesFact $ PersonMoves "Mary" "bedroom")
+
+  describe "parse" $ do
+    it "returns the name Mary and football as the object" $
+      parse "Mary took the football" `shouldBe` (PersonTakesObjectFact $ PersonTakesObject "Mary" "football")
 
   describe "questionParser" $ do
     it "returns parsed question in a list" $
