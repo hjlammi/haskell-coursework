@@ -56,6 +56,29 @@ main = hspec $ do
           expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing), ("John", Person "John" (Just "office") Nothing), ("Lisa", Person "Lisa" (Just "garden") Nothing)]) Map.empty in
       Main.updateData d fact `shouldBe` expected
 
+  describe "updateData" $ do
+    it "updates nonempty objects Map" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") (Just "flower"))]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+          fact = (PersonMovesFact $ PersonMoves "John" "office")
+          expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") (Just "flower")), ("John", Person "John" (Just "office") Nothing)]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "updates person's object and adds the object with its location in the objects Map" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing)]) Map.empty
+          fact = (PersonTakesObjectFact $ PersonTakesObject "Mary" "apple")
+          expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") (Just "apple"))]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "adds new person with an object in the objects list" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing)]) Map.empty
+          fact = (PersonTakesObjectFact $ PersonTakesObject "John" "flower")
+          expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing), ("John", Person "John" Nothing (Just "flower"))]) (Map.fromList [("flower", Object $ ObjectLocation (Just "John") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
+
+
   -- answerOne
     describe "answerOne" $ do
       it "answers yes when asked if Mary is in the kitchen" $

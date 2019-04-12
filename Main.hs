@@ -17,6 +17,7 @@ main = do
     let listOfLines = lines contents
         listOfFacts = parseLines listOfLines
         parsedData = foldl updateData (Data Map.empty Map.empty) listOfFacts in do
+        print parsedData
         readQuestion parsedData
 
 readQuestion :: Data -> IO ()
@@ -39,13 +40,23 @@ updateData dataElem (PersonMovesFact f) =
   let name = personName f
       location = personLocation f
       updatedPerson = (Person name (Just location) Nothing)
-  in (Data (Map.insert name updatedPerson $ persons dataElem) Map.empty)
+  in (Data (Map.insert name updatedPerson $ persons dataElem) (objects dataElem))
 
 updateData dataElem (PersonTakesObjectFact f) =
   let name = personTakesObjectName f
       object = personTakesObjectObject f
-      updatedPerson = (Person name Nothing (Just object))
-  in (Data (Map.insert name updatedPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just name) Nothing) $ objects dataElem ))
+      maybePerson = Map.lookup name (persons dataElem)
+  in case maybePerson of
+      Just person ->
+        let loc = location person
+            updatedPerson = (Person name loc (Just object))
+        in (Data (Map.insert name updatedPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just name) Nothing) $ objects dataElem))
+      Nothing ->
+        let newName = personTakesObjectName f
+            newObject = personTakesObjectObject f
+            newPerson = (Person newName Nothing (Just object))
+        in (Data (Map.insert newName newPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newName) Nothing) $ objects dataElem))
+
 
 answerOne :: Data -> String -> String
 answerOne parsedData question =
@@ -76,6 +87,6 @@ answerOne parsedData question =
                         let maybeLocation = location person
                         in case maybeLocation of
                           Just location -> location
-                          Nothing -> "don't know"
+                          Nothing -> "don't know1"
                       Nothing -> "maybe"
-        Nothing -> "don't know"
+        Nothing -> "don't know2"
