@@ -66,3 +66,8 @@ main = hspec $ do
       it "answers no when asked if Mary is in the garden" $
         let d = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing)] in
         Main.answerOne d "Is Mary in the garden ?" `shouldBe` "no"
+
+    describe "answerOne" $ do
+      it "answers maybe when asked if a person we have no data of is in a location" $
+        let d = Data $ Map.fromList [("Mary", Person "Mary" (Just "kitchen") Nothing)] in
+        Main.answerOne d "Is Sarah in the garden ?" `shouldBe` "maybe"
