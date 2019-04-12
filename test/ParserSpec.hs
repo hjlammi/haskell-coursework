@@ -87,16 +87,16 @@ main = hspec $ do
 
   describe "questionParser" $ do
     it "returns parsed question in a list" $
-      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(Question "Mary" (Just "kitchen"), "")]
+      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(PersonQuestion $ PQ "Mary" (Just "kitchen"), "")]
 
   describe "questionParser" $ do
-    it "returns parsed question with football as the subject" $
-      readP_to_S questionParser "Where is the football ?" `shouldBe` [(Question "football" Nothing, "")]
+    it "returns parsed question with football as the personName" $
+      readP_to_S questionParser "Where is the football ?" `shouldBe` [(ObjectQuestion $ OQ "football" Nothing, "")]
 
   describe "parseQuestion" $ do
-    it "returns parsed question with Daniel as the subject and bedroom as the place" $
-      parseQuestion "Is Daniel in the bedroom ?" `shouldBe` (Question "Daniel" (Just "bedroom"))
+    it "returns parsed question with Daniel as the personName and bedroom as the place" $
+      parseQuestion "Is Daniel in the bedroom ?" `shouldBe` (PersonQuestion $ PQ "Daniel" (Just "bedroom"))
 
   describe "parseQuestion" $ do
-    it "returns parsed question with football as the subject" $
-      parseQuestion "Where is the football ?" `shouldBe` (Question "football" Nothing)
+    it "returns parsed question with football as the personName" $
+      parseQuestion "Where is the football ?" `shouldBe` (ObjectQuestion $ OQ "football" Nothing)

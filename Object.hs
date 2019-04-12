@@ -1,6 +1,13 @@
 module Object where
+import qualified Data.Map.Strict as Map
 
-data Object = Object {
-                      objectName :: String,
-                      objectLocation :: Maybe String
-                     } deriving (Show, Eq)
+data Object =
+  Object {
+    objectLocation :: ObjectLocation
+  } deriving (Show, Eq)
+
+data ObjectLocation =
+  ObjectLocation {
+    onPerson :: Maybe String,
+    inLocation :: Maybe String
+  } deriving (Show, Eq)
