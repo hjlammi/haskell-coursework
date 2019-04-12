@@ -46,7 +46,7 @@ movementParser = do
 takingObjectParser :: ReadP Fact
 takingObjectParser = do
   name <- nameParser
-  verb <- verbGetObjectParser
+  verb <- verbTakeObjectParser
   object <- objectParser
   return (PersonTakesObjectFact $ PersonTakesObject name object)
 
@@ -71,8 +71,8 @@ verbMoveParser = do
     else
       pfail
 
-verbGetObjectParser :: ReadP ()
-verbGetObjectParser = do
+verbTakeObjectParser :: ReadP ()
+verbTakeObjectParser = do
   verb <- readSubStr
   if isInList verb ["took", "got"]
     then do
