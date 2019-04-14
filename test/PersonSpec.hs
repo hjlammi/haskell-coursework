@@ -70,3 +70,18 @@ main = hspec $ do
           fact = (PersonDiscardsObject "John" "shoe")
           updatedPerson = (Person "John" (Just "garden") ["apple", "flower", "football"]) in
       discardObject person fact `shouldBe` updatedPerson
+
+  describe "countObjects" $ do
+    it "returns 0 because the person doesn't have any objects" $
+      let person = Person "John" (Just "garden") [] in
+      countObjects person `shouldBe` 0
+
+  describe "countObjects" $ do
+    it "returns 1 because the person has one object" $
+      let person = Person "John" (Just "garden") ["apple"] in
+      countObjects person `shouldBe` 1
+
+  describe "countObjects" $ do
+    it "returns 3 because the person has three objects" $
+      let person = Person "John" (Just "garden") ["apple", "football", "flower"] in
+      countObjects person `shouldBe` 3

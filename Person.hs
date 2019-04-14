@@ -60,3 +60,7 @@ discard object [x]
 discard object (x:xs)
   | object == x = xs
   | otherwise = x : (discard object xs)
+
+countObjects :: Person -> Int
+countObjects person =
+  length $ Person.objects person
