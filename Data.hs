@@ -9,11 +9,6 @@ data Data =
     objects :: Map.Map String Object
   } deriving (Show, Eq)
 
-data Fact =
-  PersonMovesFact PersonMoves |
-  PersonTakesObjectFact PersonTakesObject
-  deriving (Show, Eq)
-
 data Question =
   PersonQuestion PQ |
   ObjectQuestion OQ

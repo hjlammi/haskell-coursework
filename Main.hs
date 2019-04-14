@@ -28,21 +28,19 @@ readQuestion parsedData = do
       print answer
       readQuestion parsedData
 
-parseLine :: String -> Fact
+parseLine :: String -> Person.Fact
 parseLine line = parse $ line
 
-parseLines :: [String] -> [Fact]
+parseLines :: [String] -> [Person.Fact]
 parseLines lines =
   map parseLine lines
 
-updateData :: Data -> Fact -> Data
-updateData dataElem (PersonMovesFact f) =
-  let name = Person.personName f
-      location = Person.personLocation f
-      updatedPerson = (Person.Person name (Just location) [])
-  in (Data (Map.insert name updatedPerson $ persons dataElem) (objects dataElem))
+updateData :: Data -> Person.Fact -> Data
+updateData dataElem (Person.PersonMovesFact f) =
+  let updatedPerson = Person.updateLocation f
+  in (Data (Map.insert (Person.personName f) updatedPerson $ persons dataElem) (objects dataElem))
 
-updateData dataElem (PersonTakesObjectFact f) =
+updateData dataElem (Person.PersonTakesObjectFact f) =
   let name = Person.personTakesObjectName f
       object = Person.personTakesObjectObject f
       maybePerson = Map.lookup name (persons dataElem)
