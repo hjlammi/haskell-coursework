@@ -56,6 +56,17 @@ updateData dataElem (Person.PersonTakesObjectFact f) =
             newPerson = (Person.Person newName Nothing [object])
         in (Data (Map.insert newName newPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newName) Nothing) $ objects dataElem))
 
+updateData dataElem (Person.PersonDiscardsObjectFact f) =
+  let name = Person.personDiscardsObjectName f
+      object = Person.personDiscardsObjectObject f
+      maybePerson = Map.lookup name (persons dataElem)
+  in case maybePerson of
+    Just person ->
+      let updatedPerson = Person.discardObject person f
+      in (Data (Map.insert name updatedPerson $ persons dataElem) (Map.delete object $ objects dataElem))
+    Nothing ->
+      dataElem
+
 
 answerOne :: Data -> String -> String
 answerOne parsedData question =

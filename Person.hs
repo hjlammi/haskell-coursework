@@ -38,3 +38,25 @@ updateLocation fact =
   let name = Person.personName fact
       location = Person.personLocation fact in
   (Person.Person name (Just location) [])
+
+discardObject :: Person -> PersonDiscardsObject -> Person
+discardObject person fact =
+  let name = Person.personDiscardsObjectName fact
+      discardedObject = Person.personDiscardsObjectObject fact
+      location = Person.location person
+      objects = Person.objects person in
+  if elem discardedObject objects
+    then
+      let newObjects = discard discardedObject objects
+      in (Person.Person name location newObjects)
+    else
+      person
+
+discard :: String -> [String] -> [String]
+discard object [] = []
+discard object [x]
+  | object == x = []
+  | otherwise = [x]
+discard object (x:xs)
+  | object == x = xs
+  | otherwise = x : (discard object xs)

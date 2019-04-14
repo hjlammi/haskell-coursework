@@ -85,12 +85,38 @@ main = hspec $ do
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
-    it "adds the first object in a person's objects" $
+    it "adds the first and only object in a person's objects" $
       let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") [])]) Map.empty
           fact = (PersonTakesObjectFact $ PersonTakesObject "Mary" "flower")
           expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)]) in
       Main.updateData d fact `shouldBe` expected
 
+  describe "updateData" $ do
+    it "discards the first and only object in a person's objects" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+          fact = (PersonDiscardsObjectFact $ PersonDiscardsObject "Mary" "flower")
+          expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") [])]) Map.empty in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "discards the last object in a person's objects" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["apple", "flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing), ("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          fact = (PersonDiscardsObjectFact $ PersonDiscardsObject "Mary" "flower")
+          expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "discards the middle object in a person's objects" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["apple", "flower", "football"])]) (Map.fromList [("football", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing), ("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          fact = (PersonDiscardsObjectFact $ PersonDiscardsObject "Mary" "flower")
+          expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["apple", "football"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("football", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "tries to discard object from a person that is not in the data" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["apple", "flower", "football"])]) (Map.fromList [("football", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing), ("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          fact = (PersonDiscardsObjectFact $ PersonDiscardsObject "Sarah" "flower") in
+      Main.updateData d fact `shouldBe` d
 
 
   -- answerOne
