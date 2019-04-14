@@ -49,6 +49,10 @@ main = hspec $ do
     it "should return empty tuple i.e. work with the word took" $
       readP_to_S verbTakeObjectParser "took the football" `shouldBe` [((), "the football")]
 
+  describe " verbTakeObjectParser" $ do
+    it "should parse the work 'picked up'" $
+      readP_to_S verbTakeObjectParser "picked up the football" `shouldBe` [((), "the football")]
+
   describe "locationParser" $ do
     it "should return school as the location" $
       readP_to_S locationParser "the school" `shouldBe` [("school", "")]
@@ -100,3 +104,7 @@ main = hspec $ do
   describe "parseQuestion" $ do
     it "returns parsed question with football as the personName" $
       parseQuestion "Where is the football ?" `shouldBe` (ObjectQuestion $ OQ "football" Nothing)
+
+  describe "discardingObjectParser" $ do
+    it "returns the name Mary and apple as the object" $
+      readP_to_S discardingObjectParser "Mary discarded the apple" `shouldBe` [(PersonDiscardsObjectFact $ PersonDiscardsObject "Mary" "apple", "")]

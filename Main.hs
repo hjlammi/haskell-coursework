@@ -17,6 +17,7 @@ main = do
     let listOfLines = lines contents
         listOfFacts = parseLines listOfLines
         parsedData = foldl updateData (Data Map.empty Map.empty) listOfFacts in do
+        print listOfLines
         print parsedData
         readQuestion parsedData
 

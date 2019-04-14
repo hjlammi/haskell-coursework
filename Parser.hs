@@ -7,7 +7,7 @@ import Data
 import qualified Data.Map.Strict as Map
 
 parse :: String -> Fact
-parse str = fst $ head $ readP_to_S (movementParser <|> takingObjectParser) str
+parse str = fst $ head $ readP_to_S (movementParser <|> takingObjectParser <|> discardingObjectParser) str
 
 parseQuestion :: String -> Question
 parseQuestion question = do
@@ -50,6 +50,13 @@ takingObjectParser = do
   object <- objectParser
   return (PersonTakesObjectFact $ PersonTakesObject name object)
 
+discardingObjectParser :: ReadP Fact
+discardingObjectParser = do
+  name <- nameParser
+  verb <- verbDiscardObjectParser
+  object <- objectParser
+  return (PersonDiscardsObjectFact $ PersonDiscardsObject name object)
+
 nameParser :: ReadP String
 nameParser = do
   name <- readSubStr
@@ -73,8 +80,13 @@ verbMoveParser = do
 
 verbTakeObjectParser :: ReadP ()
 verbTakeObjectParser = do
+  string "took " <|> string "got " <|> string "picked up "
+  return ()
+
+verbDiscardObjectParser :: ReadP ()
+verbDiscardObjectParser = do
   verb <- readSubStr
-  if isInList verb ["took", "got"]
+  if isInList verb ["discarded"]
     then do
       satisfy (== ' ')
       return ()
