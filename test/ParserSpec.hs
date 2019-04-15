@@ -59,11 +59,11 @@ main = hspec $ do
 
   describe "movementParser" $ do
     it "returns the name John and the current place office" $
-      readP_to_S movementParser "John moved to the office" `shouldBe` [(PersonMovesFact $ PersonMoves "John" "office", "")]
+      readP_to_S movementParser "John moved to the office" `shouldBe` [(PersonMovesFact $ PersonMoves "John" (Just "office"), "")]
 
   describe "movementParser" $ do
     it "returns the name Daniel and the current place bedroom" $
-      readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(PersonMovesFact $ PersonMoves "Daniel" "bedroom", "")]
+      readP_to_S movementParser "Daniel journeyed to the bedroom" `shouldBe` [(PersonMovesFact $ PersonMoves "Daniel" (Just "bedroom"), "")]
 
   describe "movementParser" $ do
     it "doesn't return anything" $
@@ -83,7 +83,7 @@ main = hspec $ do
 
   describe "parse" $ do
     it "returns the name Mary and bedroom as the current place" $
-      parse "Mary journeyed to the bedroom" `shouldBe` (PersonMovesFact $ PersonMoves "Mary" "bedroom")
+      parse "Mary journeyed to the bedroom" `shouldBe` (PersonMovesFact $ PersonMoves "Mary" (Just "bedroom"))
 
   describe "parse" $ do
     it "returns the name Mary and football as the object" $
@@ -116,3 +116,11 @@ main = hspec $ do
   describe "questionParser" $ do
     it "returns parsed question with Mary as the personName" $
       readP_to_S questionParser "How many objects is Mary carrying ?" `shouldBe` [(NumOfObjectsQuestion $ NumQ "Mary", "")]
+
+  describe "movementParser" $ do
+    it "returns the name Bill and the current place office" $
+      readP_to_S movementParser "Bill is in the office" `shouldBe` [(PersonMovesFact $ PersonMoves "Bill" (Just "office"), "")]
+
+  describe "movingAwayParser" $ do
+    it "returns the name Fred and no current place" $
+      readP_to_S movingAwayParser "Fred is no longer in the park" `shouldBe` [(PersonMovesAwayFact $ PersonMovesAway "Fred" (Just "park"), "")]

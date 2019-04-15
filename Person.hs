@@ -11,6 +11,7 @@ data Person =
 
 data Fact =
   PersonMovesFact PersonMoves |
+  PersonMovesAwayFact PersonMovesAway |
   PersonTakesObjectFact PersonTakesObject |
   PersonDiscardsObjectFact PersonDiscardsObject |
   PersonHandsObjectFact PersonHandsObject
@@ -19,7 +20,13 @@ data Fact =
 data PersonMoves =
   PersonMoves {
     personName :: String,
-    personLocation :: String
+    personLocation :: Maybe String
+  } deriving (Show, Eq)
+
+data PersonMovesAway =
+  PersonMovesAway {
+    personMovesAwayName :: String,
+    personMovesAwayLocation :: Maybe String
   } deriving (Show, Eq)
 
 data PersonTakesObject =

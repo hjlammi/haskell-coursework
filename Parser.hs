@@ -45,10 +45,18 @@ movementParser :: ReadP Fact
 movementParser = do
   name <- nameParser
   satisfy (== ' ')
-  verb <- verbMoveParser
+  verb <- verbMoveParser <|> verbIsParser
   location <- locationParser
   eof
-  return (PersonMovesFact $ PersonMoves name location)
+  return (PersonMovesFact $ PersonMoves name (Just location))
+
+movingAwayParser :: ReadP Fact
+movingAwayParser = do
+  name <- nameParser
+  string " is no longer in "
+  location <- locationParser
+  eof
+  return (PersonMovesAwayFact $ PersonMovesAway name (Just location))
 
 takingObjectParser :: ReadP Fact
 takingObjectParser = do
@@ -95,6 +103,16 @@ verbMoveParser = do
       satisfy (== ' ')
       string "to"
       satisfy (== ' ')
+      return ()
+    else
+      pfail
+
+verbIsParser :: ReadP ()
+verbIsParser = do
+  verb <- readSubStr
+  if verb == "is"
+    then do
+      string " in "
       return ()
     else
       pfail
