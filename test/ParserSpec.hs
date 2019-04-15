@@ -11,7 +11,7 @@ main :: IO ()
 main = hspec $ do
   describe "nameParser" $ do
     it "returns the name of the person from the input string" $
-      readP_to_S nameParser "John moved to the office" `shouldBe` [("John", "moved to the office")]
+      readP_to_S nameParser "John moved to the office" `shouldBe` [("John", " moved to the office")]
 
   describe "nameParser" $ do
     it "returns an empty string because no name is found" $
@@ -108,3 +108,7 @@ main = hspec $ do
   describe "discardingObjectParser" $ do
     it "returns the name Mary and apple as the object" $
       readP_to_S discardingObjectParser "Mary discarded the apple" `shouldBe` [(PersonDiscardsObjectFact $ PersonDiscardsObject "Mary" "apple", "")]
+
+  describe "handingObjectParser" $ do
+    it "returns the name Daniel and apple as the object" $
+      readP_to_S handingObjectParser "Mary handed the apple to Daniel" `shouldBe` [(PersonHandsObjectFact $ PersonHandsObject "Daniel" "apple", "")]

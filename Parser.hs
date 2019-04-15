@@ -20,6 +20,7 @@ questionParser = do
     "Is" -> do
       satisfy (== ' ')
       name <- nameParser
+      satisfy (== ' ')
       string "in"
       satisfy (== ' ')
       location <- locationParser
@@ -38,6 +39,7 @@ questionParser = do
 movementParser :: ReadP Fact
 movementParser = do
   name <- nameParser
+  satisfy (== ' ')
   verb <- verbMoveParser
   location <- locationParser
   eof
@@ -46,6 +48,7 @@ movementParser = do
 takingObjectParser :: ReadP Fact
 takingObjectParser = do
   name <- nameParser
+  satisfy (== ' ')
   verb <- verbTakeObjectParser
   object <- objectParser
   return (PersonTakesObjectFact $ PersonTakesObject name object)
@@ -53,14 +56,25 @@ takingObjectParser = do
 discardingObjectParser :: ReadP Fact
 discardingObjectParser = do
   name <- nameParser
+  satisfy (== ' ')
   verb <- verbDiscardObjectParser
   object <- objectParser
   return (PersonDiscardsObjectFact $ PersonDiscardsObject name object)
 
+handingObjectParser :: ReadP Fact
+handingObjectParser = do
+  subjectPerson <- nameParser
+  satisfy (== ' ')
+  verb <- verbTakeObjectParser
+  object <- objectParser
+  string " to "
+  objectPerson <- nameParser
+  eof
+  return (PersonHandsObjectFact $ PersonHandsObject objectPerson object)
+
 nameParser :: ReadP String
 nameParser = do
   name <- readSubStr
-  satisfy (== ' ')
   if name == "The" then
     pfail
   else
@@ -80,7 +94,7 @@ verbMoveParser = do
 
 verbTakeObjectParser :: ReadP ()
 verbTakeObjectParser = do
-  string "took " <|> string "got " <|> string "picked up "
+  string "took " <|> string "got " <|> string "picked up " <|> string "handed "
   return ()
 
 verbDiscardObjectParser :: ReadP ()
@@ -105,7 +119,6 @@ objectParser = do
   string "the"
   satisfy (== ' ')
   object <- readSubStr
-  eof
   return object
 
 readSubStr :: ReadP String
