@@ -7,9 +7,21 @@ main :: IO ()
 main = hspec $ do
   describe "updateLocation" $ do
     it "updates person's location to a new one" $
-      let fact = (PersonMoves "John" "bathroom")
+      let oldPerson = Person "John" (Just "kitchen") []
           updatedPerson = Person "John" (Just "bathroom") [] in
-      updateLocation fact `shouldBe` updatedPerson
+      updateLocation oldPerson "bathroom" `shouldBe` updatedPerson
+
+  describe "updateLocation" $ do
+    it "updates person's location to a new one while the objects remain the same" $
+      let oldPerson = Person "John" (Just "kitchen") ["flower", "apple"]
+          updatedPerson = Person "John" (Just "bathroom") ["flower", "apple"] in
+      updateLocation oldPerson "bathroom" `shouldBe` updatedPerson
+
+  describe "updateObjects" $ do
+    it "updates person's location" $
+      let oldPerson = Person "John" (Just "kitchen") []
+          expected = Person "John" (Just "kitchen") ["flower"] in
+      updateObjects oldPerson "flower" `shouldBe` expected
 
   describe "discard" $ do
     it "returns empty list when trying to discard from an empty list" $

@@ -43,6 +43,13 @@ main = hspec $ do
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
+    it "returns an updated Data element in a Map with one person and objects" $
+      let d = Data (Map.fromList [("John", Person "John" (Just "kitchen") ["apple", "football"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("football", Object $ ObjectLocation (Just "Mary") Nothing)])
+          fact = (PersonMovesFact $ PersonMoves "John" "office")
+          expected = Data (Map.fromList [("John", Person "John" (Just "office") ["apple", "football"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("football", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
     it "updates person in the middle of the Map" $
       let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") []), ("John", Person "John" (Just "kitchen") []), ("Lisa", Person "Lisa" (Just "garden") [])]) Map.empty
           fact = (PersonMovesFact $ PersonMoves "John" "office")
@@ -132,6 +139,14 @@ main = hspec $ do
           expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["flower"]), ("Daniel", Person "Daniel" (Just "kitchen") ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Daniel") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)]) in
       Main.updateData d fact `shouldBe` expected
 
+
+  -- insertPerson
+  describe "insertPerson" $ do
+    it "adds a person in an empty persons Map" $
+      let persons = Map.empty
+          person = (Person.Person "Mary" Nothing [])
+          expected = Map.fromList [("Mary", Person "Mary" Nothing [])]
+      in Main.insertPerson person persons `shouldBe` expected
 
   -- answerOne
   describe "answerOne" $ do

@@ -41,11 +41,13 @@ data PersonHandsObject =
     personGetsObjectObject :: String
   } deriving (Show, Eq)
 
-updateLocation :: PersonMoves -> Person
-updateLocation fact =
-  let name = Person.personName fact
-      location = Person.personLocation fact in
-  (Person.Person name (Just location) [])
+updateLocation :: Person -> String -> Person
+updateLocation oldPerson newLocation =
+  (Person.Person (name oldPerson) (Just newLocation) (objects oldPerson))
+
+updateObjects :: Person -> String -> Person
+updateObjects oldPerson object =
+  (Person.Person (name oldPerson) (location oldPerson) ((objects oldPerson) ++ [object]))
 
 discardObject :: Person -> PersonDiscardsObject -> Person
 discardObject person fact =
