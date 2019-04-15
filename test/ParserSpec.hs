@@ -111,4 +111,4 @@ main = hspec $ do
 
   describe "handingObjectParser" $ do
     it "returns the name Daniel and apple as the object" $
-      readP_to_S handingObjectParser "Mary handed the apple to Daniel" `shouldBe` [(PersonHandsObjectFact $ PersonHandsObject "Daniel" "apple", "")]
+      readP_to_S handingObjectParser "Mary handed the apple to Daniel" `shouldBe` [(PersonHandsObjectFact $ PersonHandsObject "Mary" "Daniel" "apple", "")]

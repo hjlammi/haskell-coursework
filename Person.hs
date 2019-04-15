@@ -36,6 +36,7 @@ data PersonDiscardsObject =
 
 data PersonHandsObject =
   PersonHandsObject {
+    personHandsObjectName :: String,
     personGetsObjectName :: String,
     personGetsObjectObject :: String
   } deriving (Show, Eq)

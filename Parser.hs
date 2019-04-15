@@ -63,14 +63,14 @@ discardingObjectParser = do
 
 handingObjectParser :: ReadP Fact
 handingObjectParser = do
-  subjectPerson <- nameParser
+  oldOwner <- nameParser
   satisfy (== ' ')
   verb <- verbTakeObjectParser
   object <- objectParser
   string " to "
-  objectPerson <- nameParser
+  newOwner <- nameParser
   eof
-  return (PersonHandsObjectFact $ PersonHandsObject objectPerson object)
+  return (PersonHandsObjectFact $ PersonHandsObject oldOwner newOwner object)
 
 nameParser :: ReadP String
 nameParser = do

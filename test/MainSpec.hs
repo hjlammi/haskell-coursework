@@ -118,31 +118,45 @@ main = hspec $ do
           fact = (PersonDiscardsObjectFact $ PersonDiscardsObject "Sarah" "flower") in
       Main.updateData d fact `shouldBe` d
 
+  describe "updateData" $ do
+    it "adds an object to a new person Daniel handed by Mary" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          fact = (PersonHandsObjectFact $ PersonHandsObject "Mary" "Daniel" "apple")
+          expected = Data (Map.fromList [("Daniel", Person "Daniel" Nothing ["apple"]), ("Mary", Person "Mary" (Just "kitchen") [])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Daniel") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "adds an object to an existing person Daniel handed by Mary" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["flower", "apple"]), ("Daniel", Person "Daniel" (Just "kitchen") [])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          fact = (PersonHandsObjectFact $ PersonHandsObject "Mary" "Daniel" "apple")
+          expected = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") ["flower"]), ("Daniel", Person "Daniel" (Just "kitchen") ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Daniel") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
 
   -- answerOne
-    describe "answerOne" $ do
-      it "answers yes when asked if Mary is in the kitchen" $
-        let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") [])]) Map.empty in
-        Main.answerOne d "Is Mary in the kitchen ?" `shouldBe` "yes"
+  describe "answerOne" $ do
+    it "answers yes when asked if Mary is in the kitchen" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") [])]) Map.empty in
+      Main.answerOne d "Is Mary in the kitchen ?" `shouldBe` "yes"
 
-    describe "answerOne" $ do
-      it "answers no when asked if Mary is in the garden" $
-        let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") [])]) Map.empty in
-        Main.answerOne d "Is Mary in the garden ?" `shouldBe` "no"
+  describe "answerOne" $ do
+    it "answers no when asked if Mary is in the garden" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") [])]) Map.empty in
+      Main.answerOne d "Is Mary in the garden ?" `shouldBe` "no"
 
-    describe "answerOne" $ do
-      it "answers maybe when asked if a person we have no data of is in a location" $
-        let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") [])]) Map.empty in
-        Main.answerOne d "Is Sarah in the garden ?" `shouldBe` "maybe"
+  describe "answerOne" $ do
+    it "answers maybe when asked if a person we have no data of is in a location" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" (Just "kitchen") [])]) Map.empty in
+      Main.answerOne d "Is Sarah in the garden ?" `shouldBe` "maybe"
 
-    describe "answerOne" $ do
-      it "returns hallway as the location for football" $
-        let d = Data Map.empty (Map.fromList [("football", Object $ ObjectLocation Nothing (Just "hallway"))]) in
-        Main.answerOne d "Where is the football ?" `shouldBe` "hallway"
+  describe "answerOne" $ do
+    it "returns hallway as the location for football" $
+      let d = Data Map.empty (Map.fromList [("football", Object $ ObjectLocation Nothing (Just "hallway"))]) in
+      Main.answerOne d "Where is the football ?" `shouldBe` "hallway"
 
-    describe "answerOne" $ do
-      it "returns kitchen as the location for football that John has" $
-        let d = Data
-                (Map.fromList [("John", Person "John" (Just "kitchen") [])])
-                (Map.fromList [("football", Object $ ObjectLocation (Just "John") Nothing)]) in
-        Main.answerOne d "Where is the football ?" `shouldBe` "kitchen"
+  describe "answerOne" $ do
+    it "returns kitchen as the location for football that John has" $
+      let d = Data
+              (Map.fromList [("John", Person "John" (Just "kitchen") [])])
+              (Map.fromList [("football", Object $ ObjectLocation (Just "John") Nothing)]) in
+      Main.answerOne d "Where is the football ?" `shouldBe` "kitchen"

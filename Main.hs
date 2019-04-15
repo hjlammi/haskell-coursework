@@ -68,6 +68,26 @@ updateData dataElem (Person.PersonDiscardsObjectFact f) =
     Nothing ->
       dataElem
 
+updateData dataElem (Person.PersonHandsObjectFact f) =
+  let oldOwnerName = Person.personHandsObjectName f
+      newOwnerName = Person.personGetsObjectName f
+      object = Person.personGetsObjectObject f
+      maybeOldOwner = Map.lookup oldOwnerName (persons dataElem)
+  in case maybeOldOwner of
+    Just oldOwner ->
+      let maybeNewOwner = Map.lookup newOwnerName (persons dataElem)
+      in case maybeNewOwner of
+        Just newOwner ->
+          let updatedPerson = Person.discardObject oldOwner (Person.PersonDiscardsObject oldOwnerName object)
+              newOwnerLoc = Person.location newOwner
+              newPerson = (Person.Person newOwnerName newOwnerLoc [object])
+              updatedData = (Data (Map.insert oldOwnerName updatedPerson $ persons dataElem) (Map.delete object $ objects dataElem))
+          in (Data (Map.insert newOwnerName newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
+        Nothing ->
+          let updatedPerson = Person.discardObject oldOwner (Person.PersonDiscardsObject oldOwnerName object)
+              newPerson = (Person.Person newOwnerName Nothing [object])
+              updatedData = (Data (Map.insert oldOwnerName updatedPerson $ persons dataElem) (Map.delete object $ objects dataElem))
+          in (Data (Map.insert newOwnerName newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
 
 answerOne :: Data -> String -> String
 answerOne parsedData question =
