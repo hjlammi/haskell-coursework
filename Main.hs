@@ -19,15 +19,15 @@ main = do
         parsedData = foldl updateData (Data Map.empty Map.empty) listOfFacts in do
         print listOfLines
         print parsedData
-        readQuestion parsedData
+        answerQuestion parsedData
 
-readQuestion :: Data -> IO ()
-readQuestion parsedData = do
+answerQuestion :: Data -> IO ()
+answerQuestion parsedData = do
   question <- getLine
   when (question /= "quit") $ do
     let answer = answerOne parsedData question in do
       print answer
-      readQuestion parsedData
+      answerQuestion parsedData
 
 parseLine :: String -> Person.Fact
 parseLine line = parse $ line
