@@ -7,7 +7,7 @@ import Data
 import qualified Data.Map.Strict as Map
 
 parse :: String -> Fact
-parse str = fst $ head $ readP_to_S (movementParser <|> takingObjectParser <|> discardingObjectParser) str
+parse str = fst $ head $ readP_to_S (movementParser <|> takingObjectParser <|> discardingObjectParser <|> handingObjectParser) str
 
 parseQuestion :: String -> Question
 parseQuestion question = do
@@ -32,6 +32,11 @@ questionParser = do
       object <- readSubStr
       string " ?"
       return (ObjectQuestion $ OQ object Nothing)
+    "How" -> do
+      string " many objects is "
+      name <- nameParser
+      string " carrying ?"
+      return (NumOfObjectsQuestion $ NumQ name)
     _ ->
       pfail
 
@@ -51,6 +56,7 @@ takingObjectParser = do
   satisfy (== ' ')
   verb <- verbTakeObjectParser
   object <- objectParser
+  eof
   return (PersonTakesObjectFact $ PersonTakesObject name object)
 
 discardingObjectParser :: ReadP Fact
@@ -59,6 +65,7 @@ discardingObjectParser = do
   satisfy (== ' ')
   verb <- verbDiscardObjectParser
   object <- objectParser
+  eof
   return (PersonDiscardsObjectFact $ PersonDiscardsObject name object)
 
 handingObjectParser :: ReadP Fact

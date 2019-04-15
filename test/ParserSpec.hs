@@ -94,7 +94,7 @@ main = hspec $ do
       readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(PersonQuestion $ PQ "Mary" (Just "kitchen"), "")]
 
   describe "questionParser" $ do
-    it "returns parsed question with football as the personName" $
+    it "returns parsed question with football as the objectName" $
       readP_to_S questionParser "Where is the football ?" `shouldBe` [(ObjectQuestion $ OQ "football" Nothing, "")]
 
   describe "parseQuestion" $ do
@@ -112,3 +112,7 @@ main = hspec $ do
   describe "handingObjectParser" $ do
     it "returns the name Daniel and apple as the object" $
       readP_to_S handingObjectParser "Mary handed the apple to Daniel" `shouldBe` [(PersonHandsObjectFact $ PersonHandsObject "Mary" "Daniel" "apple", "")]
+
+  describe "questionParser" $ do
+    it "returns parsed question with Mary as the personName" $
+      readP_to_S questionParser "How many objects is Mary carrying ?" `shouldBe` [(NumOfObjectsQuestion $ NumQ "Mary", "")]

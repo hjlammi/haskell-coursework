@@ -78,16 +78,28 @@ updateData dataElem (Person.PersonHandsObjectFact f) =
       let maybeNewOwner = Map.lookup newOwnerName (persons dataElem)
       in case maybeNewOwner of
         Just newOwner ->
-          let updatedPerson = Person.discardObject oldOwner (Person.PersonDiscardsObject oldOwnerName object)
+          let updatedDataElem = updateData dataElem (Person.PersonDiscardsObjectFact $ Person.PersonDiscardsObject oldOwnerName object)
               newOwnerLoc = Person.location newOwner
-              newPerson = (Person.Person newOwnerName newOwnerLoc [object])
-              updatedData = (Data (Map.insert oldOwnerName updatedPerson $ persons dataElem) (Map.delete object $ objects dataElem))
-          in (Data (Map.insert newOwnerName newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
+              objs = Person.objects newOwner
+              newPerson = (Person.Person newOwnerName newOwnerLoc (objs ++ [object]))
+          in (Data (Map.insert newOwnerName newPerson $ persons updatedDataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedDataElem))
         Nothing ->
-          let updatedPerson = Person.discardObject oldOwner (Person.PersonDiscardsObject oldOwnerName object)
+          let updatedData = updateData dataElem (Person.PersonDiscardsObjectFact $ Person.PersonDiscardsObject oldOwnerName object)
               newPerson = (Person.Person newOwnerName Nothing [object])
-              updatedData = (Data (Map.insert oldOwnerName updatedPerson $ persons dataElem) (Map.delete object $ objects dataElem))
           in (Data (Map.insert newOwnerName newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
+    Nothing ->
+      let maybeNewOwner = Map.lookup newOwnerName (persons dataElem)
+      in case maybeNewOwner of
+        Just newOwner ->
+          let objs = Person.objects newOwner
+              updatedOwner = (Person.Person newOwnerName Nothing (objs ++ [object]))
+              updatedData = (Data (Map.insert newOwnerName updatedOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
+          in (Data (Map.insert oldOwnerName (Person.Person oldOwnerName Nothing []) $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
+        Nothing ->
+          let oldOwner = (Person.Person oldOwnerName Nothing [])
+              newOwner = (Person.Person newOwnerName Nothing [object])
+              oldOwnerAddedData = (Data (Map.insert oldOwnerName oldOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
+          in (Data (Map.insert newOwnerName newOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
 
 answerOne :: Data -> String -> String
 answerOne parsedData question =
@@ -101,6 +113,13 @@ answerOne parsedData question =
           then "yes"
           else "no"
         Nothing -> "maybe"
+    NumOfObjectsQuestion noq ->
+      let maybePerson = Map.lookup (ownerName noq) (persons parsedData)
+      in case maybePerson of
+        Just person ->
+          show (Person.countObjects person) :: String
+        Nothing ->
+          "don't know"
     ObjectQuestion oq ->
       let maybeObject = Map.lookup (objectName oq) (objects parsedData)
       in case maybeObject of

@@ -11,7 +11,8 @@ data Data =
 
 data Question =
   PersonQuestion PQ |
-  ObjectQuestion OQ
+  ObjectQuestion OQ |
+  NumOfObjectsQuestion NumQ
   deriving (Show, Eq)
 
 data PQ =
@@ -25,3 +26,8 @@ data OQ =
     objectName :: String,
     objectPlace :: Maybe String
   } deriving (Show, Eq)
+
+data NumQ =
+ NumQ {
+   ownerName :: String
+ } deriving (Show, Eq)
