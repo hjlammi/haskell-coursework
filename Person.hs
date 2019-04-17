@@ -26,7 +26,7 @@ data PersonMoves =
 data PersonMovesAway =
   PersonMovesAway {
     personMovesAwayName :: String,
-    personMovesAwayLocation :: Maybe String
+    personMovesAwayLocation :: String
   } deriving (Show, Eq)
 
 data PersonTakesObject =

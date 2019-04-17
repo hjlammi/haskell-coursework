@@ -55,7 +55,8 @@ updateData dataElem (Person.PersonMovesAwayFact f) =
       maybePerson = Map.lookup name $ persons dataElem
       in case maybePerson of
         Just person ->
-        let updatedPerson = Person.removeLocation person location
+          let updatedPerson = Person.removeLocation person location
+          in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem)
 
 
 updateData dataElem (Person.PersonTakesObjectFact f) =

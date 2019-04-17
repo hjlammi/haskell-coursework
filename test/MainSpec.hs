@@ -141,9 +141,16 @@ main = hspec $ do
 
   describe "updateData" $ do
     it "removes a location from a person as the person moves away from it" $
-      let d = Data (Map.fromList [("Fred", Person "Mary" ["kitchen"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
-          fact = (PersonMovesAwayFact $ PersonMovesAway "Fred" (Just "park"))
-          expected = Data (Map.fromList [("Fred", Person "Fred" [] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+      let d = Data (Map.fromList [("Fred", Person "Fred" ["kitchen"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+          fact = (PersonMovesAwayFact $ PersonMovesAway "Fred" "kitchen")
+          expected = Data (Map.fromList [("Fred", Person "Fred" [] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "removes the last location from a person" $
+      let d = Data (Map.fromList [("Fred", Person "Fred" ["kitchen", "bathroom", "park"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+          fact = (PersonMovesAwayFact $ PersonMovesAway "Fred" "park")
+          expected = Data (Map.fromList [("Fred", Person "Fred" ["kitchen", "bathroom"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
       Main.updateData d fact `shouldBe` expected
 
 

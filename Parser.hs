@@ -56,7 +56,7 @@ movingAwayParser = do
   string " is no longer in "
   location <- locationParser
   eof
-  return (PersonMovesAwayFact $ PersonMovesAway name (Just location))
+  return (PersonMovesAwayFact $ PersonMovesAway name location)
 
 takingObjectParser :: ReadP Fact
 takingObjectParser = do
