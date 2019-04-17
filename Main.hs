@@ -46,8 +46,17 @@ updateData dataElem (Person.PersonMovesFact f) =
       let updatedPerson = Person.updateLocation person newLocation
       in (Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem))
     Nothing ->
-      let newPerson = Person.Person name (Just newLocation) []
+      let newPerson = Person.Person name [newLocation] []
       in (Data (insertPerson newPerson $ persons dataElem) (objects dataElem))
+
+updateData dataElem (Person.PersonMovesAwayFact f) =
+  let name = Person.personMovesAwayName f
+      location = Person.personMovesAwayLocation f
+      maybePerson = Map.lookup name $ persons dataElem
+      in case maybePerson of
+        Just person ->
+        let updatedPerson = Person.removeLocation person location
+
 
 updateData dataElem (Person.PersonTakesObjectFact f) =
   let name = Person.personTakesObjectName f
@@ -60,7 +69,7 @@ updateData dataElem (Person.PersonTakesObjectFact f) =
       Nothing ->
         let newName = Person.personTakesObjectName f
             newObject = Person.personTakesObjectObject f
-            newPerson = (Person.Person newName Nothing [object])
+            newPerson = (Person.Person newName [] [object])
         in (Data (insertPerson newPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newName) Nothing) $ objects dataElem))
 
 updateData dataElem (Person.PersonDiscardsObjectFact f) =
@@ -89,7 +98,7 @@ updateData dataElem (Person.PersonHandsObjectFact f) =
           in (Data (insertPerson newPerson $ persons updatedDataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedDataElem))
         Nothing ->
           let updatedData = updateData dataElem (Person.PersonDiscardsObjectFact $ Person.PersonDiscardsObject oldOwnerName object)
-              newPerson = (Person.Person newOwnerName Nothing [object])
+              newPerson = (Person.Person newOwnerName [] [object])
           in (Data (insertPerson newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
     Nothing ->
       let maybeNewOwner = Map.lookup newOwnerName (persons dataElem)
@@ -97,13 +106,15 @@ updateData dataElem (Person.PersonHandsObjectFact f) =
         Just newOwner ->
           let updatedOwner = Person.updateObjects newOwner object
               updatedData = (Data (insertPerson updatedOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
-              oldOwner = (Person.Person oldOwnerName Nothing [])
+              oldOwner = (Person.Person oldOwnerName [] [])
           in (Data (insertPerson oldOwner $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
         Nothing ->
-          let oldOwner = (Person.Person oldOwnerName Nothing [])
-              newOwner = (Person.Person newOwnerName Nothing [object])
+          let oldOwner = (Person.Person oldOwnerName [] [])
+              newOwner = (Person.Person newOwnerName [] [object])
               oldOwnerAddedData = (Data (insertPerson oldOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
           in (Data (insertPerson newOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
+
+
 
 insertPerson :: Person.Person -> Map.Map String Person.Person -> Map.Map String Person.Person
 insertPerson person persons =
@@ -117,7 +128,7 @@ answerOne parsedData question =
       let maybePerson = Map.lookup (subject pq) (persons parsedData)
       in case maybePerson of
         Just person ->
-          if (Person.location person) == (place pq)
+          if elem (place pq) (Person.location person)
           then "yes"
           else "no"
         Nothing -> "maybe"
@@ -142,9 +153,7 @@ answerOne parsedData question =
                     let maybePerson = Map.lookup personName (persons parsedData)
                     in case maybePerson of
                       Just person ->
-                        let maybeLocation = Person.location person
-                        in case maybeLocation of
-                          Just location -> location
-                          Nothing -> "don't know1"
+                        -- TODO: WHAT IF SEVERAL LOCATIONS
+                        head $ Person.location person
                       Nothing -> "maybe"
         Nothing -> "don't know2"

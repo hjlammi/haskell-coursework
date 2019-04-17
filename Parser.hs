@@ -25,13 +25,13 @@ questionParser = do
       satisfy (== ' ')
       location <- locationParser
       string " ?"
-      return (PersonQuestion $ PQ name (Just location))
+      return (PersonQuestion $ PQ name location)
     "Where" -> do
       satisfy (== ' ')
       string "is the "
       object <- readSubStr
       string " ?"
-      return (ObjectQuestion $ OQ object Nothing)
+      return (ObjectQuestion $ OQ object)
     "How" -> do
       string " many objects is "
       name <- nameParser
@@ -48,7 +48,7 @@ movementParser = do
   verb <- verbMoveParser <|> verbIsParser
   location <- locationParser
   eof
-  return (PersonMovesFact $ PersonMoves name (Just location))
+  return (PersonMovesFact $ PersonMoves name location)
 
 movingAwayParser :: ReadP Fact
 movingAwayParser = do

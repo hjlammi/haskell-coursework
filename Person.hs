@@ -5,7 +5,7 @@ import qualified Data.Map.Strict as Map
 data Person =
   Person {
     name :: String,
-    location :: Maybe String,
+    location :: [String],
     objects :: [String]
   } deriving (Show, Eq)
 
@@ -20,7 +20,7 @@ data Fact =
 data PersonMoves =
   PersonMoves {
     personName :: String,
-    personLocation :: Maybe String
+    personLocation :: String
   } deriving (Show, Eq)
 
 data PersonMovesAway =
@@ -50,7 +50,16 @@ data PersonHandsObject =
 
 updateLocation :: Person -> String -> Person
 updateLocation oldPerson newLocation =
-  (Person.Person (name oldPerson) (Just newLocation) (objects oldPerson))
+  (Person.Person (name oldPerson) [newLocation] (objects oldPerson))
+
+removeLocation :: Person -> String -> Person
+removeLocation person location
+  | elem location $ Person.location person =
+    let updatedLocation = discard location $ Person.location person
+        name = Person.name person
+        objects = Person.objects person
+    in (Person.Person name updatedLocation objects)
+  | otherwise = person
 
 updateObjects :: Person -> String -> Person
 updateObjects oldPerson object =

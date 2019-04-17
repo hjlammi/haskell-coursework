@@ -18,13 +18,13 @@ data Question =
 data PQ =
   PQ {
     subject :: String,
-    place :: Maybe String
+    place :: String
   } deriving (Show, Eq)
 
 data OQ =
   OQ {
-    objectName :: String,
-    objectPlace :: Maybe String
+    objectName :: String
+    -- objectPlace :: Maybe String
   } deriving (Show, Eq)
 
 data NumQ =
