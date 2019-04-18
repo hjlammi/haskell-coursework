@@ -140,7 +140,7 @@ answerOne parsedData question =
       let maybePerson = Map.lookup (subject pq) (persons parsedData)
       in case maybePerson of
         Just person ->
-          if elem (place pq) (Person.location person)
+          if elem (place pq) (Person.currentLocation person)
           then "yes"
           else "no"
         Nothing -> "maybe"
@@ -166,6 +166,6 @@ answerOne parsedData question =
                     in case maybePerson of
                       Just person ->
                         -- TODO: WHAT IF SEVERAL LOCATIONS
-                        head $ Person.location person
+                        head $ Person.currentLocation person
                       Nothing -> "maybe"
         Nothing -> "don't know2"

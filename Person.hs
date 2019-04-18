@@ -5,7 +5,7 @@ import qualified Data.Map.Strict as Map
 data Person =
   Person {
     name :: String,
-    location :: [String],
+    currentLocation :: [String],
     objects :: [String]
   } deriving (Show, Eq)
 
@@ -61,8 +61,8 @@ updateLocation oldPerson newLocation =
 
 removeLocation :: Person -> String -> Person
 removeLocation person location
-  | elem location $ Person.location person =
-    let updatedLocation = discard location $ Person.location person
+  | elem location $ Person.currentLocation person =
+    let updatedLocation = discard location $ Person.currentLocation person
         name = Person.name person
         objects = Person.objects person
     in (Person.Person name updatedLocation objects)
@@ -72,18 +72,18 @@ addLocation :: Person -> [String] -> Person
 addLocation person xs =
   let name = Person.name person
       objects = Person.objects person
-      locations = Person.location person
+      locations = Person.currentLocation person
   in Person.Person name (locations ++ xs) objects
 
 updateObjects :: Person -> String -> Person
 updateObjects oldPerson object =
-  (Person.Person (name oldPerson) (location oldPerson) ((objects oldPerson) ++ [object]))
+  (Person.Person (name oldPerson) (currentLocation oldPerson) ((objects oldPerson) ++ [object]))
 
 discardObject :: Person -> PersonDiscardsObject -> Person
 discardObject person fact =
   let name = Person.personDiscardsObjectName fact
       discardedObject = Person.personDiscardsObjectObject fact
-      location = Person.location person
+      location = Person.currentLocation person
       objects = Person.objects person in
   if elem discardedObject objects
     then
