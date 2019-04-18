@@ -47,7 +47,7 @@ updateData dataElem (Person.PersonMovesFact f) =
       let updatedPerson = Person.updateLocation person newLocation
       in (Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem))
     Nothing ->
-      let newPerson = Person.Person name [newLocation] []
+      let newPerson = Person.Person name [newLocation] [newLocation] []
       in (Data (insertPerson newPerson $ persons dataElem) (objects dataElem))
 
 updateData dataElem (Person.PersonMovesAwayFact f) =
@@ -59,7 +59,7 @@ updateData dataElem (Person.PersonMovesAwayFact f) =
           let updatedPerson = Person.removeLocation person location
           in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem)
         Nothing ->
-          let newPerson = (Person.Person name [] [])
+          let newPerson = (Person.Person name [] [location] [])
           in Data (insertPerson newPerson $ persons dataElem) (objects dataElem)
 
 updateData dataElem (Person.PersonEitherLocationFact f) =
@@ -82,7 +82,7 @@ updateData dataElem (Person.PersonTakesObjectFact f) =
       Nothing ->
         let newName = Person.personTakesObjectName f
             newObject = Person.personTakesObjectObject f
-            newPerson = (Person.Person newName [] [object])
+            newPerson = (Person.Person newName [] [] [object])
         in (Data (insertPerson newPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newName) Nothing) $ objects dataElem))
 
 updateData dataElem (Person.PersonDiscardsObjectFact f) =
@@ -111,7 +111,8 @@ updateData dataElem (Person.PersonHandsObjectFact f) =
           in (Data (insertPerson newPerson $ persons updatedDataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedDataElem))
         Nothing ->
           let updatedData = updateData dataElem (Person.PersonDiscardsObjectFact $ Person.PersonDiscardsObject oldOwnerName object)
-              newPerson = (Person.Person newOwnerName [] [object])
+              location = Person.currentLocation oldOwner
+              newPerson = (Person.Person newOwnerName location location [object])
           in (Data (insertPerson newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
     Nothing ->
       let maybeNewOwner = Map.lookup newOwnerName (persons dataElem)
@@ -119,11 +120,11 @@ updateData dataElem (Person.PersonHandsObjectFact f) =
         Just newOwner ->
           let updatedOwner = Person.updateObjects newOwner object
               updatedData = (Data (insertPerson updatedOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
-              oldOwner = (Person.Person oldOwnerName [] [])
+              oldOwner = (Person.Person oldOwnerName [] [] [])
           in (Data (insertPerson oldOwner $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
         Nothing ->
-          let oldOwner = (Person.Person oldOwnerName [] [])
-              newOwner = (Person.Person newOwnerName [] [object])
+          let oldOwner = (Person.Person oldOwnerName [] [] [])
+              newOwner = (Person.Person newOwnerName [] [] [object])
               oldOwnerAddedData = (Data (insertPerson oldOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
           in (Data (insertPerson newOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
 
@@ -136,10 +137,15 @@ insertPerson person persons =
 answerOne :: Data -> Question -> String
 answerOne parsedData (PersonLocationQuestion q) =
   let maybePerson = Map.lookup (personLocationName q) (persons parsedData)
+      questionLocation = personLocationLocation q
   in case maybePerson of
     Just person
-      | elem (personLocationLocation q) (Person.currentLocation person) -> "yes"
-      | otherwise -> "no"
+      | length (Person.currentLocation person) > 1 && elem questionLocation (Person.currentLocation person) -> "maybe"
+      | elem questionLocation (Person.currentLocation person) -> "yes"
+      | (null (Person.currentLocation person)) && (not (questionLocation == last (Person.locationHistory person))) -> "maybe"
+      | questionLocation == last (Person.locationHistory person) -> "no"
+      | not $ elem questionLocation (Person.currentLocation person) -> "no"
+      | otherwise -> "maybe"
     Nothing -> "maybe"
 
 answerOne parsedData (ObjectLocationQuestion q) =

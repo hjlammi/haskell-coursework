@@ -91,19 +91,19 @@ main = hspec $ do
 
   describe "questionParser" $ do
     it "returns parsed question in a list" $
-      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(PersonQuestion $ PQ "Mary" "kitchen", "")]
+      readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen", "")]
 
   describe "questionParser" $ do
     it "returns parsed question with football as the objectName" $
-      readP_to_S questionParser "Where is the football ?" `shouldBe` [(ObjectQuestion $ OQ "football", "")]
+      readP_to_S questionParser "Where is the football ?" `shouldBe` [(ObjectLocationQuestion $ ObjectLocationQ "football", "")]
 
   describe "parseQuestion" $ do
     it "returns parsed question with Daniel as the personName and bedroom as the place" $
-      parseQuestion "Is Daniel in the bedroom ?" `shouldBe` (PersonQuestion $ PQ "Daniel" "bedroom")
+      parseQuestion "Is Daniel in the bedroom ?" `shouldBe` (PersonLocationQuestion $ PersonLocationQ "Daniel" "bedroom")
 
   describe "parseQuestion" $ do
     it "returns parsed question with football as the personName" $
-      parseQuestion "Where is the football ?" `shouldBe` (ObjectQuestion $ OQ "football")
+      parseQuestion "Where is the football ?" `shouldBe` (ObjectLocationQuestion $ ObjectLocationQ "football")
 
   describe "discardingObjectParser" $ do
     it "returns the name Mary and apple as the object" $
@@ -115,7 +115,7 @@ main = hspec $ do
 
   describe "questionParser" $ do
     it "returns parsed question with Mary as the personName" $
-      readP_to_S questionParser "How many objects is Mary carrying ?" `shouldBe` [(NumOfObjectsQuestion $ NumQ "Mary", "")]
+      readP_to_S questionParser "How many objects is Mary carrying ?" `shouldBe` [(NumOfObjectsQuestion $ NumOfObjectsQ "Mary", "")]
 
   describe "movementParser" $ do
     it "returns the name Bill and the current place office" $
