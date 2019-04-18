@@ -57,7 +57,18 @@ updateData dataElem (Person.PersonMovesAwayFact f) =
         Just person ->
           let updatedPerson = Person.removeLocation person location
           in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem)
+        Nothing ->
+          let newPerson = (Person.Person name [] [])
+          in Data (insertPerson newPerson $ persons dataElem) (objects dataElem)
 
+updateData dataElem (Person.PersonEitherLocationFact f) =
+  let name = Person.personEitherLocationName f
+      locations = Person.personEitherLocationLocations f
+      maybePerson = Map.lookup name $ persons dataElem
+      in case maybePerson of
+        Just person ->
+          let updatedPerson = Person.addLocation person locations
+          in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem)
 
 updateData dataElem (Person.PersonTakesObjectFact f) =
   let name = Person.personTakesObjectName f

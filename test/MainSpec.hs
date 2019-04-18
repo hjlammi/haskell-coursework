@@ -153,6 +153,27 @@ main = hspec $ do
           expected = Data (Map.fromList [("Fred", Person "Fred" ["kitchen", "bathroom"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
       Main.updateData d fact `shouldBe` expected
 
+  describe "updateData" $ do
+    it "tries to remove location from a person that doesn't exist" $
+      let d = Data Map.empty Map.empty
+          fact = (PersonMovesAwayFact $ PersonMovesAway "Fred" "park")
+          expected = Data (Map.fromList [("Fred", Person "Fred" [] [])]) Map.empty in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "adds person one location" $
+      let d = Data (Map.fromList [("Fred", Person "Fred" [] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+          fact = (PersonMovesFact $ PersonMoves "Fred" "park")
+          expected = Data (Map.fromList [("Fred", Person "Fred" ["park"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "adds person two possible locations" $
+      let d = Data (Map.fromList [("Fred", Person "Fred" [] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+          fact = (PersonEitherLocationFact $ PersonEitherLocation "Fred" ["park", "kitchen"])
+          expected = Data (Map.fromList [("Fred", Person "Fred" ["park", "kitchen"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
 
   -- insertPerson
   describe "insertPerson" $ do

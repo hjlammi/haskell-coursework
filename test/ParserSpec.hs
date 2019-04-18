@@ -124,3 +124,7 @@ main = hspec $ do
   describe "movingAwayParser" $ do
     it "returns the name Fred and no current place" $
       readP_to_S movingAwayParser "Fred is no longer in the park" `shouldBe` [(PersonMovesAwayFact $ PersonMovesAway "Fred" "park", "")]
+
+  describe "eitherLocationParser" $ do
+    it "returns the name Fred and two possible locations" $
+      readP_to_S eitherLocationParser "Fred is either in the school or the kitchen" `shouldBe` [(PersonEitherLocationFact $ PersonEitherLocation "Fred" ["school", "kitchen"], "")]

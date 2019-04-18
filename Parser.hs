@@ -7,7 +7,7 @@ import Data
 import qualified Data.Map.Strict as Map
 
 parse :: String -> Fact
-parse str = fst $ head $ readP_to_S (movementParser <|> takingObjectParser <|> discardingObjectParser <|> handingObjectParser) str
+parse str = fst $ head $ readP_to_S (movementParser <|> takingObjectParser <|> discardingObjectParser <|> handingObjectParser <|> movingAwayParser <|> eitherLocationParser) str
 
 parseQuestion :: String -> Question
 parseQuestion question = do
@@ -86,6 +86,17 @@ handingObjectParser = do
   newOwner <- nameParser
   eof
   return (PersonHandsObjectFact $ PersonHandsObject oldOwner newOwner object)
+
+eitherLocationParser :: ReadP Fact
+eitherLocationParser = do
+  name <- nameParser
+  string " is either in "
+  location1 <-locationParser
+  string " or "
+  location2 <- locationParser
+  eof
+  return (PersonEitherLocationFact $ PersonEitherLocation name [location1, location2])
+
 
 nameParser :: ReadP String
 nameParser = do

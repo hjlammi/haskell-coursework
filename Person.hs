@@ -14,7 +14,8 @@ data Fact =
   PersonMovesAwayFact PersonMovesAway |
   PersonTakesObjectFact PersonTakesObject |
   PersonDiscardsObjectFact PersonDiscardsObject |
-  PersonHandsObjectFact PersonHandsObject
+  PersonHandsObjectFact PersonHandsObject |
+  PersonEitherLocationFact PersonEitherLocation
   deriving (Show, Eq)
 
 data PersonMoves =
@@ -27,6 +28,12 @@ data PersonMovesAway =
   PersonMovesAway {
     personMovesAwayName :: String,
     personMovesAwayLocation :: String
+  } deriving (Show, Eq)
+
+data PersonEitherLocation =
+  PersonEitherLocation {
+    personEitherLocationName :: String,
+    personEitherLocationLocations :: [String]
   } deriving (Show, Eq)
 
 data PersonTakesObject =
@@ -60,6 +67,13 @@ removeLocation person location
         objects = Person.objects person
     in (Person.Person name updatedLocation objects)
   | otherwise = person
+
+addLocation :: Person -> [String] -> Person
+addLocation person xs =
+  let name = Person.name person
+      objects = Person.objects person
+      locations = Person.location person
+  in Person.Person name (locations ++ xs) objects
 
 updateObjects :: Person -> String -> Person
 updateObjects oldPerson object =

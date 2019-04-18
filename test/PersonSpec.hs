@@ -41,6 +41,19 @@ main = hspec $ do
           updatedPerson = Person "John" ["kitchen"] [] in
       removeLocation oldPerson "bathroom" `shouldBe` updatedPerson
 
+  describe "addLocation" $ do
+    it "adds one location" $
+      let oldPerson = Person "John" ["bathroom"] []
+          updatedPerson = Person "John" ["bathroom", "kitchen"] [] in
+      addLocation oldPerson ["kitchen"] `shouldBe` updatedPerson
+
+  describe "addLocation" $ do
+    it "adds two locations" $
+      let oldPerson = Person "John" ["bathroom"] []
+          updatedPerson = Person "John" ["bathroom", "kitchen", "park"] [] in
+      addLocation oldPerson ["kitchen", "park"] `shouldBe` updatedPerson
+
+
   describe "updateObjects" $ do
     it "updates person's location" $
       let oldPerson = Person "John" ["kitchen"] []
