@@ -25,18 +25,18 @@ questionParser = do
       satisfy (== ' ')
       location <- locationParser
       string " ?"
-      return (PersonQuestion $ PQ name location)
+      return (PersonLocationQuestion $ PersonLocationQ name location)
     "Where" -> do
       satisfy (== ' ')
       string "is the "
       object <- readSubStr
       string " ?"
-      return (ObjectQuestion $ OQ object)
+      return (ObjectLocationQuestion $ ObjectLocationQ object)
     "How" -> do
       string " many objects is "
       name <- nameParser
       string " carrying ?"
-      return (NumOfObjectsQuestion $ NumQ name)
+      return (NumOfObjectsQuestion $ NumOfObjectsQ name)
     _ ->
       pfail
 

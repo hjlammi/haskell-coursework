@@ -25,7 +25,8 @@ answerQuestion :: Data -> IO ()
 answerQuestion parsedData = do
   question <- getLine
   when (question /= "quit") $ do
-    let answer = answerOne parsedData question in do
+    let parsedQuestion = parseQuestion question
+        answer = answerOne parsedData parsedQuestion in do
       print answer
       answerQuestion parsedData
 
@@ -132,40 +133,37 @@ insertPerson :: Person.Person -> Map.Map String Person.Person -> Map.Map String 
 insertPerson person persons =
   Map.insert (Person.name person) person $ persons
 
-answerOne :: Data -> String -> String
-answerOne parsedData question =
-  let parsedQuestion = parseQuestion question
-  in case parsedQuestion of
-    PersonQuestion pq ->
-      let maybePerson = Map.lookup (subject pq) (persons parsedData)
-      in case maybePerson of
-        Just person ->
-          if elem (place pq) (Person.currentLocation person)
-          then "yes"
-          else "no"
-        Nothing -> "maybe"
-    NumOfObjectsQuestion noq ->
-      let maybePerson = Map.lookup (ownerName noq) (persons parsedData)
-      in case maybePerson of
-        Just person ->
-          show (Person.countObjects person) :: String
+answerOne :: Data -> Question -> String
+answerOne parsedData (PersonLocationQuestion q) =
+  let maybePerson = Map.lookup (personLocationName q) (persons parsedData)
+  in case maybePerson of
+    Just person
+      | elem (personLocationLocation q) (Person.currentLocation person) -> "yes"
+      | otherwise -> "no"
+    Nothing -> "maybe"
+
+answerOne parsedData (ObjectLocationQuestion q) =
+  let maybeObject = Map.lookup (objectName q) (objects parsedData)
+  in case maybeObject of
+    Just object ->
+      let maybeInLocation = inLocation $ objectLocation object
+      in case maybeInLocation of
+        Just location -> location
         Nothing ->
-          "don't know"
-    ObjectQuestion oq ->
-      let maybeObject = Map.lookup (objectName oq) (objects parsedData)
-      in case maybeObject of
-        Just object ->
-          let maybeInLocation = inLocation $ objectLocation object
-          in case maybeInLocation of
-              Just location -> location
-              Nothing ->
-                let maybeOnPerson = onPerson $ objectLocation object
-                in case maybeOnPerson of
-                  Just personName ->
-                    let maybePerson = Map.lookup personName (persons parsedData)
-                    in case maybePerson of
-                      Just person ->
-                        -- TODO: WHAT IF SEVERAL LOCATIONS
-                        head $ Person.currentLocation person
-                      Nothing -> "maybe"
-        Nothing -> "don't know2"
+          let maybeOnPerson = onPerson $ objectLocation object
+          in case maybeOnPerson of
+            Just personName ->
+              let maybePerson = Map.lookup personName (persons parsedData)
+              in case maybePerson of
+                Just person ->
+                  -- TODO: WHAT IF SEVERAL LOCATIONS
+                  head $ Person.currentLocation person
+            Nothing -> "don't know"
+    Nothing -> "don't know"
+
+answerOne parsedData (NumOfObjectsQuestion q) =
+  let maybePerson = Map.lookup (ownerName q) (persons parsedData)
+    in case maybePerson of
+      Just person ->
+        show (Person.countObjects person) :: String
+      Nothing -> "don't know"

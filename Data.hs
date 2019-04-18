@@ -10,24 +10,23 @@ data Data =
   } deriving (Show, Eq)
 
 data Question =
-  PersonQuestion PQ |
-  ObjectQuestion OQ |
-  NumOfObjectsQuestion NumQ
+  PersonLocationQuestion PersonLocationQ |
+  ObjectLocationQuestion ObjectLocationQ |
+  NumOfObjectsQuestion NumOfObjectsQ
   deriving (Show, Eq)
 
-data PQ =
-  PQ {
-    subject :: String,
-    place :: String
+data PersonLocationQ =
+  PersonLocationQ {
+    personLocationName :: String,
+    personLocationLocation :: String
   } deriving (Show, Eq)
 
-data OQ =
-  OQ {
+data ObjectLocationQ =
+  ObjectLocationQ {
     objectName :: String
-    -- objectPlace :: Maybe String
   } deriving (Show, Eq)
 
-data NumQ =
- NumQ {
+data NumOfObjectsQ =
+ NumOfObjectsQ {
    ownerName :: String
  } deriving (Show, Eq)
