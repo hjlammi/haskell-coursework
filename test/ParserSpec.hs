@@ -125,9 +125,9 @@ main = hspec $ do
     it "returns parsed question with Mary as the personName" $
       readP_to_S questionParser "How many objects is Mary carrying ?" `shouldBe` [(NumOfObjectsQuestion $ NumOfObjectsQ "Mary", "")]
 
-  -- describe "questionParser" $ do
-  --   it "returns parsed question that wants to know where Mary was before cinema" $
-  --     readP_to_S questionParser "Where was Mary before the school ?" `shouldBe` [(PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Mary" "school", "")]
+  describe "questionParser" $ do
+    it "returns parsed question that wants to know where Mary was before cinema" $
+      readP_to_S questionParser "Where was Mary before the school ?" `shouldBe` [(PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Mary" "school", "")]
 
   describe "isInLocationQuestionParser" $ do
     it "parses question asking if Mary is in the kitchen" $

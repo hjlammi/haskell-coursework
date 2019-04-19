@@ -287,3 +287,47 @@ main = hspec $ do
       let d = Data (Map.fromList [("Mary", Person "Mary" ["park"] ["park"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
           q = Nothing in
       Main.answerOne d q `shouldBe` "don't know"
+
+  describe "answerOne" $ do
+    it "answers school which was the location before park" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" ["park"] ["school", "park"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          q = Just (PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Mary" "park") in
+      Main.answerOne d q `shouldBe` "school"
+
+  describe "answerOne" $ do
+    it "answers 'don't know' as Mary was nowhere before park" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" ["park"] ["park"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          q = Just (PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Mary" "park") in
+      Main.answerOne d q `shouldBe` "don't know"
+
+
+-- findLocationBefore
+  describe "findLocationBefore" $ do
+    it "returns Nothing as the list doesn't have any locations" $
+      let locations = []
+          location = "office" in
+      Main.findLocationBefore locations location `shouldBe` Nothing
+
+  describe "findLocationBefore" $ do
+    it "returns Nothing as the list doesn't have a location before the current one" $
+      let locations = ["office"]
+          location = "office" in
+      Main.findLocationBefore locations location `shouldBe` Nothing
+
+  describe "findLocationBefore" $ do
+    it "returns the first location of the list of two" $
+      let locations = ["park", "office"]
+          location = "office" in
+      Main.findLocationBefore locations location `shouldBe` Just "park"
+
+  describe "findLocationBefore" $ do
+    it "returns the middle location of the list" $
+      let locations = ["park", "kitchen", "office"]
+          location = "office" in
+      Main.findLocationBefore locations location `shouldBe` Just "kitchen"
+
+  describe "findLocationBefore" $ do
+    it "returns the first location of the list of three" $
+      let locations = ["park", "kitchen", "office"]
+          location = "kitchen" in
+      Main.findLocationBefore locations location `shouldBe` Just "park"

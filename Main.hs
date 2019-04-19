@@ -171,9 +171,28 @@ answerOne parsedData (Just (ObjectLocationQuestion q)) =
 
 answerOne parsedData (Just (NumOfObjectsQuestion q)) =
   let maybePerson = Map.lookup (ownerName q) (persons parsedData)
-    in case maybePerson of
-      Just person ->
-        show (Person.countObjects person) :: String
-      Nothing -> "don't know"
+  in case maybePerson of
+    Just person ->
+      show (Person.countObjects person) :: String
+    Nothing -> "don't know"
+
+answerOne parsedData (Just (PersonLocationBeforeQuestion q)) =
+  let maybePerson = Map.lookup (personLocationBeforeName q) (persons parsedData)
+  in case maybePerson of
+    Just person ->
+      let locations = Person.locationHistory person
+          location = personLocationBeforeLocation q
+          maybeLocation = findLocationBefore locations location
+      in case maybeLocation of
+        Just l -> l
+        Nothing -> "don't know"
+
 
 answerOne parsedData Nothing = "don't know"
+
+findLocationBefore :: [String] -> String -> Maybe String
+findLocationBefore [] _ = Nothing
+findLocationBefore [x] _ = Nothing
+findLocationBefore (x:xs) location
+  | location == head xs = Just x
+  | otherwise = findLocationBefore xs location
