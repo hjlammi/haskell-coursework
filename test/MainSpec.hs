@@ -15,7 +15,7 @@ main = hspec $ do
 -- parseLine
   describe "parseLine" $ do
     it "returns one PersonMovesFact formed from input of one line" $
-      Main.parseLine "John moved to the office" `shouldBe` (PersonMovesFact $ PersonMoves "John" "office")
+      Main.parseLine "John moved to the office" `shouldBe` Just (PersonMovesFact $ PersonMoves "John" "office")
 
 -- parseLines
   describe "parseLines" $ do

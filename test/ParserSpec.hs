@@ -9,6 +9,14 @@ import Data
 
 main :: IO ()
 main = hspec $ do
+  describe "parseFactMaybe" $ do
+    it "returns the Just result of parsing a fact" $
+      parseFactMaybe movementParser "John moved to the office" `shouldBe` Just (PersonMovesFact $ PersonMoves "John" "office")
+
+  describe "parseQuestionMaybe" $ do
+    it "returns Nothing as parsing the question fails" $
+      parseQuestionMaybe questionParser "How is Mary with ?" `shouldBe` Nothing
+
   describe "nameParser" $ do
     it "returns the name of the person from the input string" $
       readP_to_S nameParser "John moved to the office" `shouldBe` [("John", " moved to the office")]
@@ -50,7 +58,7 @@ main = hspec $ do
       readP_to_S verbTakeObjectParser "took the football" `shouldBe` [((), "the football")]
 
   describe " verbTakeObjectParser" $ do
-    it "should parse the work 'picked up'" $
+    it "should parseFact the work 'picked up'" $
       readP_to_S verbTakeObjectParser "picked up the football" `shouldBe` [((), "the football")]
 
   describe "locationParser" $ do
@@ -81,13 +89,13 @@ main = hspec $ do
     it "returns the name Mary and apple as the object" $
       readP_to_S takingObjectParser "Mary got the apple" `shouldBe` [(PersonTakesObjectFact $ PersonTakesObject "Mary" "apple", "")]
 
-  describe "parse" $ do
+  describe "parseFact" $ do
     it "returns the name Mary and bedroom as the current place" $
-      parse "Mary journeyed to the bedroom" `shouldBe` (PersonMovesFact $ PersonMoves "Mary" "bedroom")
+      parseFact "Mary journeyed to the bedroom" `shouldBe` Just (PersonMovesFact $ PersonMoves "Mary" "bedroom")
 
-  describe "parse" $ do
+  describe "parseFact" $ do
     it "returns the name Mary and football as the object" $
-      parse "Mary took the football" `shouldBe` (PersonTakesObjectFact $ PersonTakesObject "Mary" "football")
+      parseFact "Mary took the football" `shouldBe` Just (PersonTakesObjectFact $ PersonTakesObject "Mary" "football")
 
   describe "questionParser" $ do
     it "returns parsed question in a list" $
@@ -99,11 +107,11 @@ main = hspec $ do
 
   describe "parseQuestion" $ do
     it "returns parsed question with Daniel as the personName and bedroom as the place" $
-      parseQuestion "Is Daniel in the bedroom ?" `shouldBe` (PersonLocationQuestion $ PersonLocationQ "Daniel" "bedroom")
+      parseQuestion "Is Daniel in the bedroom ?" `shouldBe` Just (PersonLocationQuestion $ PersonLocationQ "Daniel" "bedroom")
 
   describe "parseQuestion" $ do
     it "returns parsed question with football as the personName" $
-      parseQuestion "Where is the football ?" `shouldBe` (ObjectLocationQuestion $ ObjectLocationQ "football")
+      parseQuestion "Where is the football ?" `shouldBe` Just (ObjectLocationQuestion $ ObjectLocationQ "football")
 
   describe "discardingObjectParser" $ do
     it "returns the name Mary and apple as the object" $

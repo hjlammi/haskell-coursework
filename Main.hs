@@ -8,6 +8,7 @@ import Data
 import qualified Person as Person
 import Object
 import qualified Data.Map.Strict as Map
+import Data.Maybe (catMaybes)
 
 main :: IO ()
 main = do
@@ -26,16 +27,19 @@ answerQuestion parsedData = do
   question <- getLine
   when (question /= "quit") $ do
     let parsedQuestion = parseQuestion question
-        answer = answerOne parsedData parsedQuestion in do
-      print answer
-      answerQuestion parsedData
+    case parsedQuestion of
+      Just q ->
+        let answer = answerOne parsedData q in do
+          print answer
+    answerQuestion parsedData
 
-parseLine :: String -> Person.Fact
-parseLine line = parse $ line
+parseLine :: String -> Maybe Person.Fact
+parseLine line = parseFact $ line
 
 parseLines :: [String] -> [Person.Fact]
 parseLines lines =
-  map parseLine lines
+  let listWithNothings = map parseLine lines
+  in catMaybes listWithNothings
 
 updateData :: Data -> Person.Fact -> Data
 updateData dataElem (Person.PersonMovesFact f) =

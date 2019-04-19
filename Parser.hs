@@ -6,12 +6,24 @@ import Object
 import Data
 import qualified Data.Map.Strict as Map
 
-parse :: String -> Fact
-parse str = fst $ head $ readP_to_S (movementParser <|> takingObjectParser <|> discardingObjectParser <|> handingObjectParser <|> movingAwayParser <|> eitherLocationParser) str
+parseFactMaybe :: ReadP a -> String -> Maybe a
+parseFactMaybe parser input =
+  case readP_to_S parser input of
+    ((result, _): _) -> Just result
+    [] -> Nothing
 
-parseQuestion :: String -> Question
+parseQuestionMaybe :: ReadP a -> String -> Maybe a
+parseQuestionMaybe qParser input =
+  case readP_to_S qParser input of
+    ((result, _): _) -> Just result
+    [] -> Nothing
+
+parseFact :: String -> Maybe Fact
+parseFact str = parseFactMaybe (movementParser <|> takingObjectParser <|> discardingObjectParser <|> handingObjectParser <|> movingAwayParser <|> eitherLocationParser) str
+
+parseQuestion :: String -> Maybe Question
 parseQuestion question = do
-  fst $ head $ readP_to_S questionParser question
+  parseQuestionMaybe questionParser question
 
 questionParser :: ReadP Question
 questionParser = do
