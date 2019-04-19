@@ -27,11 +27,9 @@ answerQuestion parsedData = do
   question <- getLine
   when (question /= "quit") $ do
     let parsedQuestion = parseQuestion question
-    case parsedQuestion of
-      Just q ->
-        let answer = answerOne parsedData q in do
-          print answer
-    answerQuestion parsedData
+        answer = answerOne parsedData parsedQuestion in do
+      print answer
+      answerQuestion parsedData
 
 parseLine :: String -> Maybe Person.Fact
 parseLine line = parseFact $ line
@@ -138,8 +136,8 @@ insertPerson :: Person.Person -> Map.Map String Person.Person -> Map.Map String 
 insertPerson person persons =
   Map.insert (Person.name person) person $ persons
 
-answerOne :: Data -> Question -> String
-answerOne parsedData (PersonLocationQuestion q) =
+answerOne :: Data -> Maybe Question -> String
+answerOne parsedData (Just (PersonLocationQuestion q)) =
   let maybePerson = Map.lookup (personLocationName q) (persons parsedData)
       questionLocation = personLocationLocation q
   in case maybePerson of
@@ -152,7 +150,7 @@ answerOne parsedData (PersonLocationQuestion q) =
       | otherwise -> "maybe"
     Nothing -> "maybe"
 
-answerOne parsedData (ObjectLocationQuestion q) =
+answerOne parsedData (Just (ObjectLocationQuestion q)) =
   let maybeObject = Map.lookup (objectName q) (objects parsedData)
   in case maybeObject of
     Just object ->
@@ -171,9 +169,11 @@ answerOne parsedData (ObjectLocationQuestion q) =
             Nothing -> "don't know"
     Nothing -> "don't know"
 
-answerOne parsedData (NumOfObjectsQuestion q) =
+answerOne parsedData (Just (NumOfObjectsQuestion q)) =
   let maybePerson = Map.lookup (ownerName q) (persons parsedData)
     in case maybePerson of
       Just person ->
         show (Person.countObjects person) :: String
       Nothing -> "don't know"
+
+answerOne parsedData Nothing = "don't know"

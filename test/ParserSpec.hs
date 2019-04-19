@@ -15,7 +15,7 @@ main = hspec $ do
 
   describe "parseQuestionMaybe" $ do
     it "returns Nothing as parsing the question fails" $
-      parseQuestionMaybe questionParser "How is Mary with ?" `shouldBe` Nothing
+      parseQuestionMaybe questionParser "Who is Mary with ?" `shouldBe` Nothing
 
   describe "nameParser" $ do
     it "returns the name of the person from the input string" $

@@ -189,25 +189,25 @@ main = hspec $ do
   describe "answerOne" $ do
     it "answers yes when asked if Mary is in the kitchen" $
       let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
-          q = (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
+          q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
         Main.answerOne d q `shouldBe` "yes"
 
   describe "answerOne" $ do
     it "answers no when asked if Mary is in the garden because Mary is in the kitchen" $
       let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
-          q = (PersonLocationQuestion $ PersonLocationQ "Mary" "garden") in
+          q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "garden") in
       Main.answerOne d q `shouldBe` "no"
 
   describe "answerOne" $ do
     it "answers maybe when asked if a person we have no data of is in a location" $
       let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
-          q = (PersonLocationQuestion $ PersonLocationQ "Sarah" "garden") in
+          q = Just (PersonLocationQuestion $ PersonLocationQ "Sarah" "garden") in
       Main.answerOne d q `shouldBe` "maybe"
 
   describe "answerOne" $ do
     it "returns hallway as the location for football" $
       let d = Data Map.empty (Map.fromList [("football", Object $ ObjectLocation Nothing (Just "hallway"))])
-          q = (ObjectLocationQuestion $ ObjectLocationQ "football") in
+          q = Just (ObjectLocationQuestion $ ObjectLocationQ "football") in
       Main.answerOne d q `shouldBe` "hallway"
 
   describe "answerOne" $ do
@@ -215,7 +215,7 @@ main = hspec $ do
       let d = Data
               (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] [])])
               (Map.fromList [("football", Object $ ObjectLocation (Just "John") Nothing)])
-          q = (ObjectLocationQuestion $ ObjectLocationQ "football") in
+          q = Just (ObjectLocationQuestion $ ObjectLocationQ "football") in
       Main.answerOne d q `shouldBe` "kitchen"
 
   describe "answerOne" $ do
@@ -223,7 +223,7 @@ main = hspec $ do
       let d = Data
               (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] [])])
               (Map.fromList [("apple", Object $ ObjectLocation Nothing Nothing)])
-          q = (ObjectLocationQuestion $ ObjectLocationQ "apple") in
+          q = Just (ObjectLocationQuestion $ ObjectLocationQ "apple") in
       Main.answerOne d q `shouldBe` "don't know"
 
   describe "answerOne" $ do
@@ -231,53 +231,59 @@ main = hspec $ do
       let d = Data
               (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] [])])
               (Map.fromList [("apple", Object $ ObjectLocation Nothing Nothing)])
-          q = (ObjectLocationQuestion $ ObjectLocationQ "football") in
+          q = Just (ObjectLocationQuestion $ ObjectLocationQ "football") in
       Main.answerOne d q `shouldBe` "don't know"
 
   describe "answerOne" $ do
     it "returns 0 as Mary doesn't have any objects" $
       let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
-          q = (NumOfObjectsQuestion $ NumOfObjectsQ "Mary") in
+          q = Just (NumOfObjectsQuestion $ NumOfObjectsQ "Mary") in
       Main.answerOne d q `shouldBe` "0"
 
   describe "answerOne" $ do
     it "returns 2 as Mary has an apple and a flower" $
       let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
-          q = (NumOfObjectsQuestion $ NumOfObjectsQ "Mary") in
+          q = Just (NumOfObjectsQuestion $ NumOfObjectsQ "Mary") in
       Main.answerOne d q `shouldBe` "2"
 
   describe "answerOne" $ do
     it "answers 'don't know' because the person is not in the list" $
       let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
-          q = (NumOfObjectsQuestion $ NumOfObjectsQ "John") in
+          q = Just (NumOfObjectsQuestion $ NumOfObjectsQ "John") in
       Main.answerOne d q `shouldBe` "don't know"
 
   describe "answerOne" $ do
     it "answers 'maybe' because we don't know the person's current location" $
       let d = Data (Map.fromList [("Mary", Person "Mary" [] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
-          q = (PersonLocationQuestion $ PersonLocationQ "Mary" "garden") in
+          q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "garden") in
       Main.answerOne d q `shouldBe` "maybe"
 
   describe "answerOne" $ do
     it "answers 'no' because the question location is the last location where the person just left" $
       let d = Data (Map.fromList [("Mary", Person "Mary" [] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
-          q = (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
+          q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
       Main.answerOne d q `shouldBe` "no"
 
   describe "answerOne" $ do
     it "answers 'yes' because the person is in the question location" $
       let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["garden", "kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
-          q = (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
+          q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
       Main.answerOne d q `shouldBe` "yes"
 
   describe "answerOne" $ do
     it "answers 'maybe' because the person is either in the question location or in some other location" $
       let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen", "garden"] ["kitchen", "garden"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
-          q = (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
+          q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
       Main.answerOne d q `shouldBe` "maybe"
 
   describe "answerOne" $ do
     it "answers 'no' because the person is in some other location than what was asked" $
       let d = Data (Map.fromList [("Mary", Person "Mary" ["park", "garden"] ["kitchen", "park", "garden"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
-          q = (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
+          q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
       Main.answerOne d q `shouldBe` "no"
+
+  describe "answerOne" $ do
+    it "answers 'no' because the person is in some other location than what was asked" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" ["park"] ["park"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          q = Nothing in
+      Main.answerOne d q `shouldBe` "don't know"
