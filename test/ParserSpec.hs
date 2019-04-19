@@ -129,6 +129,10 @@ main = hspec $ do
     it "returns parsed question that wants to know where Mary was before cinema" $
       readP_to_S questionParser "Where was Mary before the school ?" `shouldBe` [(PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Mary" "school", "")]
 
+  describe "questionParser" $ do
+    it "returns parsed question that wants to know where Mary was after school" $
+      readP_to_S questionParser "Where was Mary after the school ?" `shouldBe` [(PersonLocationAfterQuestion $ PersonLocationAfterQ "Mary" "school", "")]
+
   describe "isInLocationQuestionParser" $ do
     it "parses question asking if Mary is in the kitchen" $
       readP_to_S isInLocationQuestionParser "Is Mary in the kitchen ?" `shouldBe` [(PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen", "")]
@@ -137,9 +141,9 @@ main = hspec $ do
     it "parses question asking where the football is" $
       readP_to_S whereIsObjectQuestionParser "Where is the football ?" `shouldBe` [(ObjectLocationQuestion $ ObjectLocationQ "football", "")]
 
-  describe "whereWasPersonQuestionParser" $ do
+  describe "whereWasPersonBeforeQuestionParser" $ do
     it "parses question asking where Sandra was" $
-      readP_to_S whereWasPersonQuestionParser "Where was Sandra before the school ?" `shouldBe` [(PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Sandra" "school", "")]
+      readP_to_S whereWasPersonBeforeQuestionParser "Where was Sandra before the school ?" `shouldBe` [(PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Sandra" "school", "")]
 
   describe "howManyObjectsQuestionParser" $ do
     it "parses question asking how many objects Mary has" $

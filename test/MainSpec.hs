@@ -300,6 +300,23 @@ main = hspec $ do
           q = Just (PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Mary" "park") in
       Main.answerOne d q `shouldBe` "don't know"
 
+  describe "answerOne" $ do
+    it "answers school which was the location after home" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" ["school"] ["home", "school", "cinema"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          q = Just (PersonLocationAfterQuestion $ PersonLocationAfterQ "Mary" "home") in
+      Main.answerOne d q `shouldBe` "school"
+
+  describe "answerOne" $ do
+    it "answers school which was the location after home" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" ["school"] ["home", "school", "cinema"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          q = Just (PersonLocationAfterQuestion $ PersonLocationAfterQ "Mary" "park") in
+      Main.answerOne d q `shouldBe` "don't know"
+
+  describe "answerOne" $ do
+    it "answers 'don't know' because person was not in the data" $
+      let d = Data (Map.fromList [("Mary", Person "Mary" ["school"] ["home", "school", "cinema"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+          q = Just (PersonLocationAfterQuestion $ PersonLocationAfterQ "Sandra" "park") in
+      Main.answerOne d q `shouldBe` "don't know"
 
 -- findLocationBefore
   describe "findLocationBefore" $ do
@@ -331,3 +348,28 @@ main = hspec $ do
       let locations = ["park", "kitchen", "office"]
           location = "kitchen" in
       Main.findLocationBefore locations location `shouldBe` Just "park"
+
+-- findLocationAfter
+  describe "findLocationAfter" $ do
+    it "returns Nothing as the list doesn't have any locations" $
+      let locations = []
+          location = "office" in
+      Main.findLocationAfter locations location `shouldBe` Nothing
+
+  describe "findLocationAfter" $ do
+    it "returns Nothing as the list has only one location" $
+      let locations = ["office"]
+          location = "office" in
+      Main.findLocationAfter locations location `shouldBe` Nothing
+
+  describe "findLocationAfter" $ do
+    it "returns park as the location after office" $
+      let locations = ["office", "park"]
+          location = "office" in
+      Main.findLocationAfter locations location `shouldBe` Just "park"
+
+  describe "findLocationAfter" $ do
+    it "returns restaurant as the location after park" $
+      let locations = ["office", "park", "restaurant"]
+          location = "park" in
+      Main.findLocationAfter locations location `shouldBe` Just "restaurant"

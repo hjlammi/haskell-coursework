@@ -26,7 +26,7 @@ parseQuestion question = do
   parseQuestionMaybe questionParser question
 
 questionParser :: ReadP Question
-questionParser = (isInLocationQuestionParser <|> whereIsObjectQuestionParser <|> whereWasPersonQuestionParser <|> howManyObjectsQuestionParser)
+questionParser = (isInLocationQuestionParser <|> whereIsObjectQuestionParser <|> whereWasPersonBeforeQuestionParser <|> whereWasPersonAfterQuestionParser <|> howManyObjectsQuestionParser)
 
 isInLocationQuestionParser :: ReadP Question
 isInLocationQuestionParser = do
@@ -44,14 +44,23 @@ whereIsObjectQuestionParser = do
   string " ?"
   return (ObjectLocationQuestion $ ObjectLocationQ object)
 
-whereWasPersonQuestionParser :: ReadP Question
-whereWasPersonQuestionParser = do
+whereWasPersonBeforeQuestionParser :: ReadP Question
+whereWasPersonBeforeQuestionParser = do
   string "Where was "
   name <- nameParser
   string " before "
   location <- locationParser
   string " ?"
   return (PersonLocationBeforeQuestion $ PersonLocationBeforeQ name location)
+
+whereWasPersonAfterQuestionParser :: ReadP Question
+whereWasPersonAfterQuestionParser = do
+  string "Where was "
+  name <- nameParser
+  string " after "
+  location <- locationParser
+  string " ?"
+  return (PersonLocationAfterQuestion $ PersonLocationAfterQ name location)
 
 howManyObjectsQuestionParser :: ReadP Question
 howManyObjectsQuestionParser = do
