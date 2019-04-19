@@ -125,6 +125,26 @@ main = hspec $ do
     it "returns parsed question with Mary as the personName" $
       readP_to_S questionParser "How many objects is Mary carrying ?" `shouldBe` [(NumOfObjectsQuestion $ NumOfObjectsQ "Mary", "")]
 
+  -- describe "questionParser" $ do
+  --   it "returns parsed question that wants to know where Mary was before cinema" $
+  --     readP_to_S questionParser "Where was Mary before the school ?" `shouldBe` [(PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Mary" "school", "")]
+
+  describe "isInLocationQuestionParser" $ do
+    it "parses question asking if Mary is in the kitchen" $
+      readP_to_S isInLocationQuestionParser "Is Mary in the kitchen ?" `shouldBe` [(PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen", "")]
+
+  describe "whereIsObjectQuestionParser" $ do
+    it "parses question asking where the football is" $
+      readP_to_S whereIsObjectQuestionParser "Where is the football ?" `shouldBe` [(ObjectLocationQuestion $ ObjectLocationQ "football", "")]
+
+  describe "whereWasPersonQuestionParser" $ do
+    it "parses question asking where Sandra was" $
+      readP_to_S whereWasPersonQuestionParser "Where was Sandra before the school ?" `shouldBe` [(PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Sandra" "school", "")]
+
+  describe "howManyObjectsQuestionParser" $ do
+    it "parses question asking how many objects Mary has" $
+      readP_to_S howManyObjectsQuestionParser "How many objects is Mary carrying ?" `shouldBe` [(NumOfObjectsQuestion $ NumOfObjectsQ "Mary", "")]
+
   describe "movementParser" $ do
     it "returns the name Bill and the current place office" $
       readP_to_S movementParser "Bill is in the office" `shouldBe` [(PersonMovesFact $ PersonMoves "Bill" "office", "")]

@@ -26,32 +26,39 @@ parseQuestion question = do
   parseQuestionMaybe questionParser question
 
 questionParser :: ReadP Question
-questionParser = do
-  q <- readSubStr
-  case q of
-    "Is" -> do
-      satisfy (== ' ')
-      name <- nameParser
-      satisfy (== ' ')
-      string "in"
-      satisfy (== ' ')
-      location <- locationParser
-      string " ?"
-      return (PersonLocationQuestion $ PersonLocationQ name location)
-    "Where" -> do
-      satisfy (== ' ')
-      string "is the "
-      object <- readSubStr
-      string " ?"
-      return (ObjectLocationQuestion $ ObjectLocationQ object)
-    "How" -> do
-      string " many objects is "
-      name <- nameParser
-      string " carrying ?"
-      return (NumOfObjectsQuestion $ NumOfObjectsQ name)
-    _ ->
-      pfail
+questionParser = (isInLocationQuestionParser <|> whereIsObjectQuestionParser <|> whereWasPersonQuestionParser <|> howManyObjectsQuestionParser)
 
+isInLocationQuestionParser :: ReadP Question
+isInLocationQuestionParser = do
+  string "Is "
+  name <- nameParser
+  string " in "
+  location <- locationParser
+  string " ?"
+  return (PersonLocationQuestion $ PersonLocationQ name location)
+
+whereIsObjectQuestionParser :: ReadP Question
+whereIsObjectQuestionParser = do
+  string "Where is the "
+  object <- readSubStr
+  string " ?"
+  return (ObjectLocationQuestion $ ObjectLocationQ object)
+
+whereWasPersonQuestionParser :: ReadP Question
+whereWasPersonQuestionParser = do
+  string "Where was "
+  name <- nameParser
+  string " before "
+  location <- locationParser
+  string " ?"
+  return (PersonLocationBeforeQuestion $ PersonLocationBeforeQ name location)
+
+howManyObjectsQuestionParser :: ReadP Question
+howManyObjectsQuestionParser = do
+  string "How many objects is "
+  name <- nameParser
+  string " carrying ?"
+  return (NumOfObjectsQuestion $ NumOfObjectsQ name)
 
 movementParser :: ReadP Fact
 movementParser = do

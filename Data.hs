@@ -11,6 +11,7 @@ data Data =
 
 data Question =
   PersonLocationQuestion PersonLocationQ |
+  PersonLocationBeforeQuestion PersonLocationBeforeQ |
   ObjectLocationQuestion ObjectLocationQ |
   NumOfObjectsQuestion NumOfObjectsQ
   deriving (Show, Eq)
@@ -19,6 +20,12 @@ data PersonLocationQ =
   PersonLocationQ {
     personLocationName :: String,
     personLocationLocation :: String
+  } deriving (Show, Eq)
+
+data PersonLocationBeforeQ =
+  PersonLocationBeforeQ {
+    personLocationBeforeName :: String,
+    personLocationBeforeLocation :: String
   } deriving (Show, Eq)
 
 data ObjectLocationQ =
