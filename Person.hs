@@ -17,7 +17,8 @@ data Fact =
   PersonTakesObjectFact PersonTakesObject |
   PersonDiscardsObjectFact PersonDiscardsObject |
   PersonHandsObjectFact PersonHandsObject |
-  PersonEitherLocationFact PersonEitherLocation
+  PersonEitherLocationFact PersonEitherLocation |
+  RouteFact Route
   deriving (Show, Eq)
 
 data PersonMoves =
@@ -61,6 +62,13 @@ data PersonHandsObject =
     personHandsObjectName :: String,
     personGetsObjectName :: String,
     personGetsObjectObject :: String
+  } deriving (Show, Eq)
+
+data Route =
+  Route {
+    roomTo :: String,
+    direction :: String,
+    roomFrom :: String
   } deriving (Show, Eq)
 
 updateLocation :: Person -> String -> Person

@@ -19,7 +19,7 @@ parseQuestionMaybe qParser input =
     [] -> Nothing
 
 parseFact :: String -> Maybe Fact
-parseFact str = parseFactMaybe (movementParser <|> takingObjectParser <|> discardingObjectParser <|> handingObjectParser <|> movingAwayParser <|> eitherLocationParser) str
+parseFact str = parseFactMaybe (movementParser <|> takingObjectParser <|> discardingObjectParser <|> handingObjectParser <|> movingAwayParser <|> eitherLocationParser <|> routeParser) str
 
 parseQuestion :: String -> Maybe Question
 parseQuestion question = do
@@ -125,6 +125,15 @@ eitherLocationParser = do
   eof
   return (PersonEitherLocationFact $ PersonEitherLocation name [location1, location2])
 
+routeParser :: ReadP Fact
+routeParser = do
+  loc1 <- locationParser
+  string " is "
+  direction <- readSubStr
+  string " of "
+  loc2 <- locationParser
+  eof
+  return (RouteFact $ Route loc1 direction loc2)
 
 nameParser :: ReadP String
 nameParser = do
@@ -173,7 +182,7 @@ verbDiscardObjectParser = do
 
 locationParser :: ReadP String
 locationParser = do
-  string "the"
+  string "the" <|> string "The"
   satisfy (== ' ')
   location <- readSubStr
   return location

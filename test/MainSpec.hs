@@ -17,6 +17,10 @@ main = hspec $ do
     it "returns one PersonMovesFact formed from input of one line" $
       Main.parseLine "John moved to the office" `shouldBe` Just (PersonMovesFact $ PersonMoves "John" "office")
 
+  describe "parseLine" $ do
+    it "returns RouteFact formed from input of one line" $
+      Main.parseLine "The bathroom is east of the bedroom" `shouldBe` Just (RouteFact $ Route "bathroom" "east" "bedroom")
+
 -- parseLines
   describe "parseLines" $ do
     it "parses a list of one line into a list of one fact" $

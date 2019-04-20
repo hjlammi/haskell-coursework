@@ -97,6 +97,10 @@ main = hspec $ do
     it "returns the name Mary and football as the object" $
       parseFact "Mary took the football" `shouldBe` Just (PersonTakesObjectFact $ PersonTakesObject "Mary" "football")
 
+  describe "parseFact" $ do
+    it "returns direction from a room to another" $
+      parseFact "The bathroom is east of the bedroom" `shouldBe` Just (RouteFact $ Route "bathroom" "east" "bedroom")
+
   describe "questionParser" $ do
     it "returns parsed question in a list" $
       readP_to_S questionParser "Is Mary in the kitchen ?" `shouldBe` [(PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen", "")]
