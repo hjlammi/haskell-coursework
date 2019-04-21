@@ -7,6 +7,7 @@ import Parser
 import Person
 import Object
 import Data
+import Route
 import qualified Data.Map.Strict as Map
 
 main :: IO ()
@@ -41,142 +42,279 @@ main = hspec $ do
 -- updateData
   describe "updateData" $ do
     it "returns an updated Data element in a Map with one person" $
-      let d = Data (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] [])])
+              Map.empty
+              Map.empty
           fact = (PersonMovesFact $ PersonMoves "John" "office")
-          expected = Data (Map.fromList [("John", Person "John" ["office"] ["kitchen", "office"] [])]) Map.empty in
+          expected = Data
+                     (Map.fromList [("John", Person "John" ["office"] ["kitchen", "office"] [])])
+                     Map.empty
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "returns an updated Data element in a Map with one person and objects" $
-      let d = Data (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] ["apple", "football"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("football", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] ["apple", "football"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("football", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           fact = (PersonMovesFact $ PersonMoves "John" "office")
-          expected = Data (Map.fromList [("John", Person "John" ["office"] ["kitchen", "office"] ["apple", "football"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("football", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+          expected = Data
+                     (Map.fromList [("John", Person "John" ["office"] ["kitchen", "office"] ["apple", "football"])])
+                     (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("football", Object $ ObjectLocation (Just "Mary") Nothing)])
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "updates person in the middle of the persons Map" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" ["kitchen"] ["kitchen"] []), ("Lisa", Person "Lisa" ["garden"]  ["garden"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" ["kitchen"] ["kitchen"] []), ("Lisa", Person "Lisa" ["garden"]  ["garden"] [])])
+              Map.empty
+              Map.empty
           fact = (PersonMovesFact $ PersonMoves "John" "office")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" ["office"] ["kitchen", "office"] []), ("Lisa", Person "Lisa" ["garden"]  ["garden"] [])]) Map.empty in
+          expected = Data
+                     (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" ["office"] ["kitchen", "office"] []), ("Lisa", Person "Lisa" ["garden"]  ["garden"] [])])
+                     Map.empty
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "updates last person in the Map" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" ["kitchen"] ["kitchen"] []), ("Lisa", Person "Lisa" ["garden"] ["garden"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" ["kitchen"] ["kitchen"] []), ("Lisa", Person "Lisa" ["garden"] ["garden"] [])])
+              Map.empty
+              Map.empty
           fact = (PersonMovesFact $ PersonMoves "Lisa" "office")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" ["kitchen"] ["kitchen"] []), ("Lisa", Person "Lisa" ["office"] ["garden", "office"] [])]) Map.empty in
+          expected = Data
+                     (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" ["kitchen"] ["kitchen"] []), ("Lisa", Person "Lisa" ["office"] ["garden", "office"] [])])
+                     Map.empty
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "updates nonempty objects Map" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"])])
+              (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           fact = (PersonMovesFact $ PersonMoves "John" "office")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"]), ("John", Person "John" ["office"] ["office"] [])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+          expected = Data
+                    (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"]), ("John", Person "John" ["office"] ["office"] [])])
+                    (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+                    Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "updates person's object and adds the object with its location in the objects Map" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])])
+              Map.empty
+              Map.empty
           fact = (PersonTakesObjectFact $ PersonTakesObject "Mary" "apple")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+          expected = Data
+                    (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple"])])
+                    (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+                    Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "adds new person with an object in the objects list" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])])
+              Map.empty
+              Map.empty
           fact = (PersonTakesObjectFact $ PersonTakesObject "John" "flower")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" [] [] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "John") Nothing)]) in
+          expected = Data
+                    (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] []), ("John", Person "John" [] [] ["flower"])])
+                    (Map.fromList [("flower", Object $ ObjectLocation (Just "John") Nothing)])
+                    Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "adds new object in the person's objects" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           fact = (PersonTakesObjectFact $ PersonTakesObject "Mary" "flower")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+          expected = Data
+                    (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])])
+                    (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+                    Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "adds the first and only object in a person's objects" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])])
+              Map.empty
+              Map.empty
           fact = (PersonTakesObjectFact $ PersonTakesObject "Mary" "flower")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+          expected = Data
+                     (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"])])
+                     (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "discards the first and only object in a person's objects" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"])])
+              (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           fact = (PersonDiscardsObjectFact $ PersonDiscardsObject "Mary" "flower")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty in
+          expected = Data
+                     (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])])
+                     Map.empty
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "discards the last object in a person's objects" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing), ("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])])
+              (Map.fromList [("flower", Object $ ObjectLocation (Just "Mary") Nothing), ("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           fact = (PersonDiscardsObjectFact $ PersonDiscardsObject "Mary" "flower")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+          expected = Data
+                     (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple"])])
+                     (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "discards the middle object in a person's objects" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower", "football"])]) (Map.fromList [("football", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing), ("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower", "football"])])
+              (Map.fromList [("football", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing), ("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           fact = (PersonDiscardsObjectFact $ PersonDiscardsObject "Mary" "flower")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "football"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("football", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+          expected = Data
+                    (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "football"])])
+                    (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("football", Object $ ObjectLocation (Just "Mary") Nothing)])
+                    Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "tries to discard object from a person that is not in the data" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower", "football"])]) (Map.fromList [("football", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing), ("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower", "football"])])
+              (Map.fromList [("football", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing), ("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           fact = (PersonDiscardsObjectFact $ PersonDiscardsObject "Sarah" "flower") in
       Main.updateData d fact `shouldBe` d
 
   describe "updateData" $ do
     it "adds an object to a new person Daniel handed by Mary" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           fact = (PersonHandsObjectFact $ PersonHandsObject "Mary" "Daniel" "apple")
           -- If Mary hands an object to Daniel we can deduct that they are in the same room -> Daniel's location
-          expected = Data (Map.fromList [("Daniel", Person "Daniel" ["kitchen"] ["kitchen"] ["apple"]), ("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Daniel") Nothing)]) in
+          expected = Data
+                    (Map.fromList [("Daniel", Person "Daniel" ["kitchen"] ["kitchen"] ["apple"]), ("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])])
+                    (Map.fromList [("apple", Object $ ObjectLocation (Just "Daniel") Nothing)])
+                    Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "adds an object to an existing person Daniel handed by Mary" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower", "apple"]), ("Daniel", Person "Daniel" ["kitchen"] ["kitchen"] [])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower", "apple"]), ("Daniel", Person "Daniel" ["kitchen"] ["kitchen"] [])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           fact = (PersonHandsObjectFact $ PersonHandsObject "Mary" "Daniel" "apple")
-          expected = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"]), ("Daniel", Person "Daniel" ["kitchen"] ["kitchen"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Daniel") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)]) in
+          expected = Data
+                    (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["flower"]), ("Daniel", Person "Daniel" ["kitchen"] ["kitchen"] ["apple"])])
+                    (Map.fromList [("apple", Object $ ObjectLocation (Just "Daniel") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+                    Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "removes a location from a person as the person moves away from it" $
-      let d = Data (Map.fromList [("Fred", Person "Fred" ["kitchen"] ["kitchen"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+      let d = Data
+              (Map.fromList [("Fred", Person "Fred" ["kitchen"] ["kitchen"] ["flower"])])
+              (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+              Map.empty
           fact = (PersonMovesAwayFact $ PersonMovesAway "Fred" "kitchen")
-          expected = Data (Map.fromList [("Fred", Person "Fred" [] ["kitchen"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
+          expected = Data
+                     (Map.fromList [("Fred", Person "Fred" [] ["kitchen"] ["flower"])])
+                     (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "removes the last location from a person" $
-      let d = Data (Map.fromList [("Fred", Person "Fred" ["kitchen", "bathroom", "park"] ["kitchen", "bathroom", "park"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+      let d = Data
+              (Map.fromList [("Fred", Person "Fred" ["kitchen", "bathroom", "park"] ["kitchen", "bathroom", "park"] ["flower"])])
+              (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+              Map.empty
           fact = (PersonMovesAwayFact $ PersonMovesAway "Fred" "park")
-          expected = Data (Map.fromList [("Fred", Person "Fred" ["kitchen", "bathroom"] ["kitchen", "bathroom", "park"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
+          expected = Data
+                     (Map.fromList [("Fred", Person "Fred" ["kitchen", "bathroom"] ["kitchen", "bathroom", "park"] ["flower"])])
+                     (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "tries to remove location from a person that doesn't exist" $
-      let d = Data Map.empty Map.empty
+      let d = Data Map.empty Map.empty Map.empty
           fact = (PersonMovesAwayFact $ PersonMovesAway "Fred" "park")
-          expected = Data (Map.fromList [("Fred", Person "Fred" [] ["park"] [])]) Map.empty in
+          expected = Data
+                     (Map.fromList [("Fred", Person "Fred" [] ["park"] [])])
+                     Map.empty
+                     Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "adds person one location" $
-      let d = Data (Map.fromList [("Fred", Person "Fred" [] [] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+      let d = Data
+              (Map.fromList [("Fred", Person "Fred" [] [] ["flower"])])
+              (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+              Map.empty
           fact = (PersonMovesFact $ PersonMoves "Fred" "park")
-          expected = Data (Map.fromList [("Fred", Person "Fred" ["park"] ["park"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
+          expected = Data
+                    (Map.fromList [("Fred", Person "Fred" ["park"] ["park"] ["flower"])])
+                    (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+                    Map.empty in
       Main.updateData d fact `shouldBe` expected
 
   describe "updateData" $ do
     it "adds person two possible locations" $
-      let d = Data (Map.fromList [("Fred", Person "Fred" [] [] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+      let d = Data
+              (Map.fromList [("Fred", Person "Fred" [] [] ["flower"])])
+              (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+              Map.empty
           fact = (PersonEitherLocationFact $ PersonEitherLocation "Fred" ["park", "kitchen"])
-          expected = Data (Map.fromList [("Fred", Person "Fred" ["park", "kitchen"] ["park", "kitchen"] ["flower"])]) (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
+          expected = Data
+                     (Map.fromList [("Fred", Person "Fred" ["park", "kitchen"] ["park", "kitchen"] ["flower"])])
+                     (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+                     Map.empty in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "adds a route from a room to itself and to a room next to it" $
+      let d = Data Map.empty Map.empty Map.empty
+          fact = (RouteFact $ Route "bedroom" "toilet" "north")
+          expected = Data Map.empty Map.empty (Map.fromList [(("bedroom", "bedroom"), []), (("bedroom", "toilet"), [North]), (("toilet", "toilet"), []), (("toilet", "bedroom"), [South])]) in
+      Main.updateData d fact `shouldBe` expected
+
+  describe "updateData" $ do
+    it "adds a route to a room next to the room" $
+      let d = Data Map.empty Map.empty (Map.fromList [(("bedroom", "bedroom"), []), (("bedroom", "toilet"), [North]), (("toilet", "toilet"), []), (("toilet", "bedroom"), [South])])
+          fact = (RouteFact $ Route "toilet" "kitchen" "east")
+          expected = Data Map.empty Map.empty
+                          (Map.fromList [(("bedroom", "bedroom"), []),
+                                        (("bedroom", "toilet"), [North]),
+                                        (("toilet", "toilet"), []),
+                                        (("toilet", "bedroom"), [South]),
+                                        (("kitchen", "kitchen"), []),
+                                        (("bedroom", "kitchen"), [North, East]),
+                                        (("toilet", "kitchen"), [East]),
+                                        (("kitchen", "toilet"), [West]),
+                                        (("kitchen", "bedroom"), [West, South])]) in
       Main.updateData d fact `shouldBe` expected
 
 
@@ -189,28 +327,39 @@ main = hspec $ do
       in Main.insertPerson person persons `shouldBe` expected
 
   -- answerOne
-
   describe "answerOne" $ do
     it "answers yes when asked if Mary is in the kitchen" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])])
+              Map.empty
+              Map.empty
           q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
         Main.answerOne d q `shouldBe` "yes"
 
   describe "answerOne" $ do
     it "answers no when asked if Mary is in the garden because Mary is in the kitchen" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])])
+              Map.empty
+              Map.empty
           q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "garden") in
       Main.answerOne d q `shouldBe` "no"
 
   describe "answerOne" $ do
     it "answers maybe when asked if a person we have no data of is in a location" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])])
+              Map.empty
+              Map.empty
           q = Just (PersonLocationQuestion $ PersonLocationQ "Sarah" "garden") in
       Main.answerOne d q `shouldBe` "maybe"
 
   describe "answerOne" $ do
     it "returns hallway as the location for football" $
-      let d = Data Map.empty (Map.fromList [("football", Object $ ObjectLocation Nothing (Just "hallway"))])
+      let d = Data
+              Map.empty
+              (Map.fromList [("football", Object $ ObjectLocation Nothing (Just "hallway"))])
+              Map.empty
           q = Just (ObjectLocationQuestion $ ObjectLocationQ "football") in
       Main.answerOne d q `shouldBe` "hallway"
 
@@ -219,6 +368,7 @@ main = hspec $ do
       let d = Data
               (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] [])])
               (Map.fromList [("football", Object $ ObjectLocation (Just "John") Nothing)])
+              Map.empty
           q = Just (ObjectLocationQuestion $ ObjectLocationQ "football") in
       Main.answerOne d q `shouldBe` "kitchen"
 
@@ -227,6 +377,7 @@ main = hspec $ do
       let d = Data
               (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] [])])
               (Map.fromList [("apple", Object $ ObjectLocation Nothing Nothing)])
+              Map.empty
           q = Just (ObjectLocationQuestion $ ObjectLocationQ "apple") in
       Main.answerOne d q `shouldBe` "don't know"
 
@@ -235,90 +386,133 @@ main = hspec $ do
       let d = Data
               (Map.fromList [("John", Person "John" ["kitchen"] ["kitchen"] [])])
               (Map.fromList [("apple", Object $ ObjectLocation Nothing Nothing)])
+              Map.empty
           q = Just (ObjectLocationQuestion $ ObjectLocationQ "football") in
       Main.answerOne d q `shouldBe` "don't know"
 
   describe "answerOne" $ do
     it "returns 0 as Mary doesn't have any objects" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])]) Map.empty
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] [])])
+              Map.empty
+              Map.empty
           q = Just (NumOfObjectsQuestion $ NumOfObjectsQ "Mary") in
       Main.answerOne d q `shouldBe` "0"
 
   describe "answerOne" $ do
     it "returns 2 as Mary has an apple and a flower" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (NumOfObjectsQuestion $ NumOfObjectsQ "Mary") in
       Main.answerOne d q `shouldBe` "2"
 
   describe "answerOne" $ do
     it "answers 'don't know' because the person is not in the list" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["kitchen"] ["apple", "flower"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (NumOfObjectsQuestion $ NumOfObjectsQ "John") in
       Main.answerOne d q `shouldBe` "don't know"
 
   describe "answerOne" $ do
     it "answers 'maybe' because we don't know the person's current location" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" [] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" [] ["kitchen"] ["apple", "flower"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "garden") in
       Main.answerOne d q `shouldBe` "maybe"
 
   describe "answerOne" $ do
     it "answers 'no' because the question location is the last location where the person just left" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" [] ["kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" [] ["kitchen"] ["apple", "flower"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
       Main.answerOne d q `shouldBe` "no"
 
   describe "answerOne" $ do
     it "answers 'yes' because the person is in the question location" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["garden", "kitchen"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen"] ["garden", "kitchen"] ["apple", "flower"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
       Main.answerOne d q `shouldBe` "yes"
 
   describe "answerOne" $ do
     it "answers 'maybe' because the person is either in the question location or in some other location" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["kitchen", "garden"] ["kitchen", "garden"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["kitchen", "garden"] ["kitchen", "garden"] ["apple", "flower"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
       Main.answerOne d q `shouldBe` "maybe"
 
   describe "answerOne" $ do
     it "answers 'no' because the person is in some other location than what was asked" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["park", "garden"] ["kitchen", "park", "garden"] ["apple", "flower"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["park", "garden"] ["kitchen", "park", "garden"] ["apple", "flower"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing), ("flower", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationQuestion $ PersonLocationQ "Mary" "kitchen") in
       Main.answerOne d q `shouldBe` "no"
 
   describe "answerOne" $ do
     it "answers 'no' because the person is in some other location than what was asked" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["park"] ["park"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["park"] ["park"] ["apple"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Nothing in
       Main.answerOne d q `shouldBe` "don't know"
 
   describe "answerOne" $ do
     it "answers school which was the location before park" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["park"] ["school", "park"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["park"] ["school", "park"] ["apple"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Mary" "park") in
       Main.answerOne d q `shouldBe` "school"
 
   describe "answerOne" $ do
     it "answers 'don't know' as Mary was nowhere before park" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["park"] ["park"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["park"] ["park"] ["apple"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationBeforeQuestion $ PersonLocationBeforeQ "Mary" "park") in
       Main.answerOne d q `shouldBe` "don't know"
 
   describe "answerOne" $ do
     it "answers school which was the location after home" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["school"] ["home", "school", "cinema"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["school"] ["home", "school", "cinema"] ["apple"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationAfterQuestion $ PersonLocationAfterQ "Mary" "home") in
       Main.answerOne d q `shouldBe` "school"
 
   describe "answerOne" $ do
     it "answers school which was the location after home" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["school"] ["home", "school", "cinema"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["school"] ["home", "school", "cinema"] ["apple"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationAfterQuestion $ PersonLocationAfterQ "Mary" "park") in
       Main.answerOne d q `shouldBe` "don't know"
 
   describe "answerOne" $ do
     it "answers 'don't know' because person was not in the data" $
-      let d = Data (Map.fromList [("Mary", Person "Mary" ["school"] ["home", "school", "cinema"] ["apple"])]) (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+      let d = Data
+              (Map.fromList [("Mary", Person "Mary" ["school"] ["home", "school", "cinema"] ["apple"])])
+              (Map.fromList [("apple", Object $ ObjectLocation (Just "Mary") Nothing)])
+              Map.empty
           q = Just (PersonLocationAfterQuestion $ PersonLocationAfterQ "Sandra" "park") in
       Main.answerOne d q `shouldBe` "don't know"
 

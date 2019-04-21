@@ -1,12 +1,14 @@
 module Data where
 import Object
 import Person
+import Route
 import qualified Data.Map.Strict as Map
 
 data Data =
   Data {
     persons :: Map.Map String Person,
-    objects :: Map.Map String Object
+    objects :: Map.Map String Object,
+    routes :: Map.Map (Room, Room) [Direction]
   } deriving (Show, Eq)
 
 data Question =

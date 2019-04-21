@@ -66,9 +66,9 @@ data PersonHandsObject =
 
 data Route =
   Route {
+    roomFrom :: String,
     roomTo :: String,
-    direction :: String,
-    roomFrom :: String
+    direction :: String
   } deriving (Show, Eq)
 
 updateLocation :: Person -> String -> Person

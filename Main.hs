@@ -7,8 +7,10 @@ import Parser
 import Data
 import qualified Person as Person
 import Object
+import qualified Route as Route
 import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes)
+import Data.Function ((&))
 
 main :: IO ()
 main = do
@@ -17,7 +19,7 @@ main = do
     contents <- readFile fileName
     let listOfLines = lines contents
         listOfFacts = parseLines listOfLines
-        parsedData = foldl updateData (Data Map.empty Map.empty) listOfFacts in do
+        parsedData = foldl updateData (Data Map.empty Map.empty Map.empty) listOfFacts in do
         print listOfLines
         print parsedData
         answerQuestion parsedData
@@ -47,10 +49,10 @@ updateData dataElem (Person.PersonMovesFact f) =
   in case maybePerson of
     Just person ->
       let updatedPerson = Person.updateLocation person newLocation
-      in (Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem))
+      in (Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem) (routes dataElem))
     Nothing ->
       let newPerson = Person.Person name [newLocation] [newLocation] []
-      in (Data (insertPerson newPerson $ persons dataElem) (objects dataElem))
+      in (Data (insertPerson newPerson $ persons dataElem) (objects dataElem) (routes dataElem))
 
 updateData dataElem (Person.PersonMovesAwayFact f) =
   let name = Person.personMovesAwayName f
@@ -59,10 +61,10 @@ updateData dataElem (Person.PersonMovesAwayFact f) =
       in case maybePerson of
         Just person ->
           let updatedPerson = Person.removeLocation person location
-          in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem)
+          in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem) (routes dataElem)
         Nothing ->
           let newPerson = (Person.Person name [] [location] [])
-          in Data (insertPerson newPerson $ persons dataElem) (objects dataElem)
+          in Data (insertPerson newPerson $ persons dataElem) (objects dataElem) (routes dataElem)
 
 updateData dataElem (Person.PersonEitherLocationFact f) =
   let name = Person.personEitherLocationName f
@@ -71,7 +73,8 @@ updateData dataElem (Person.PersonEitherLocationFact f) =
       in case maybePerson of
         Just person ->
           let updatedPerson = Person.addLocation person locations
-          in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem)
+          in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem) (routes dataElem)
+      -- TODO: Nothing
 
 updateData dataElem (Person.PersonTakesObjectFact f) =
   let name = Person.personTakesObjectName f
@@ -80,12 +83,12 @@ updateData dataElem (Person.PersonTakesObjectFact f) =
   in case maybePerson of
       Just person ->
         let updatedPerson = Person.updateObjects person object
-        in (Data (insertPerson updatedPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just name) Nothing) $ objects dataElem))
+        in (Data (insertPerson updatedPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just name) Nothing) $ objects dataElem) (routes dataElem))
       Nothing ->
         let newName = Person.personTakesObjectName f
             newObject = Person.personTakesObjectObject f
             newPerson = (Person.Person newName [] [] [object])
-        in (Data (insertPerson newPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newName) Nothing) $ objects dataElem))
+        in (Data (insertPerson newPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newName) Nothing) $ objects dataElem) (routes dataElem))
 
 updateData dataElem (Person.PersonDiscardsObjectFact f) =
   let name = Person.personDiscardsObjectName f
@@ -94,7 +97,7 @@ updateData dataElem (Person.PersonDiscardsObjectFact f) =
   in case maybePerson of
     Just person ->
       let updatedPerson = Person.discardObject person f
-      in (Data (insertPerson updatedPerson $ persons dataElem) (Map.delete object $ objects dataElem))
+      in (Data (insertPerson updatedPerson $ persons dataElem) (Map.delete object $ objects dataElem) (routes dataElem))
     Nothing ->
       dataElem
 
@@ -110,27 +113,51 @@ updateData dataElem (Person.PersonHandsObjectFact f) =
         Just newOwner ->
           let updatedDataElem = updateData dataElem (Person.PersonDiscardsObjectFact $ Person.PersonDiscardsObject oldOwnerName object)
               newPerson = Person.updateObjects newOwner object
-          in (Data (insertPerson newPerson $ persons updatedDataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedDataElem))
+          in (Data (insertPerson newPerson $ persons updatedDataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedDataElem) (routes dataElem))
         Nothing ->
           let updatedData = updateData dataElem (Person.PersonDiscardsObjectFact $ Person.PersonDiscardsObject oldOwnerName object)
               location = Person.currentLocation oldOwner
               newPerson = (Person.Person newOwnerName location location [object])
-          in (Data (insertPerson newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
+          in (Data (insertPerson newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData) (routes dataElem))
     Nothing ->
       let maybeNewOwner = Map.lookup newOwnerName (persons dataElem)
       in case maybeNewOwner of
         Just newOwner ->
           let updatedOwner = Person.updateObjects newOwner object
-              updatedData = (Data (insertPerson updatedOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
+              updatedData = (Data (insertPerson updatedOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem) (routes dataElem))
               oldOwner = (Person.Person oldOwnerName [] [] [])
-          in (Data (insertPerson oldOwner $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
+          in (Data (insertPerson oldOwner $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData) (routes dataElem))
         Nothing ->
           let oldOwner = (Person.Person oldOwnerName [] [] [])
               newOwner = (Person.Person newOwnerName [] [] [object])
               oldOwnerAddedData = (Data (insertPerson oldOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
-          in (Data (insertPerson newOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
+          in (Data (insertPerson newOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem) (routes dataElem))
 
 
+updateData dataElem (Person.RouteFact f) =
+  let from = Person.roomFrom f
+      to = Person.roomTo f
+      dir = Route.directionToData(Person.direction f)
+      in case dir of
+        Just direction ->
+          let maybeRoom = Map.lookup (from, from) $ routes dataElem
+          in case maybeRoom of
+            Nothing ->
+              let extendedRoutes =
+                    routes dataElem &
+                    Route.addRoom from &
+                    Route.addRoom to &
+                    Route.extendRoutes from to direction &
+                    -- opposite direction:
+                    Route.extendRoutes to from (Route.oppositeDirection direction)
+              in Data (persons dataElem) (objects dataElem) extendedRoutes
+            Just room ->
+              let extendedRoutes =
+                    routes dataElem &
+                    Route.addRoom to &
+                    Route.extendRoutes from to direction &
+                    Route.extendRoutes to from (Route.oppositeDirection direction)
+              in Data (persons dataElem) (objects dataElem) extendedRoutes
 
 insertPerson :: Person.Person -> Map.Map String Person.Person -> Map.Map String Person.Person
 insertPerson person persons =
