@@ -1,6 +1,7 @@
 module Person where
 import Object
 import qualified Data.Map.Strict as Map
+import Data.Function ((&))
 
 data Person =
   Person {
@@ -84,6 +85,23 @@ removeLocation person location
         locationHistory = Person.locationHistory person
     in (Person.Person name updatedLocation locationHistory objects)
   | otherwise = person
+
+updateCurrentLocation :: [String] -> Person -> Person
+updateCurrentLocation [] person =
+  Person.Person (name person) [] (locationHistory person) (objects person)
+
+updateCurrentLocation xs person =
+  Person.Person (name person) xs (locationHistory person) (objects person)
+
+updateLocationHistory :: [String] -> Person -> Person
+updateLocationHistory currentLocations person =
+  Person.Person (name person) (currentLocation person) ((locationHistory person) ++ [currentLocations]) (objects person)
+
+updateLocations :: [String] -> Person -> Person
+updateLocations newLocation person =
+  person &
+  updateCurrentLocation newLocation &
+  updateLocationHistory newLocation
 
 addLocation :: Person -> [String] -> Person
 addLocation person xs =

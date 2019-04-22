@@ -5,17 +5,29 @@ import Person
 
 main :: IO ()
 main = hspec $ do
-  describe "updateLocation" $ do
+  -- describe "updateLocation" $ do
+  --   it "updates person's location to a new one" $
+  --     let oldPerson = Person "John" ["kitchen"] [["kitchen"]] []
+  --         updatedPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] [] in
+  --     updateLocation oldPerson ["bathroom"] `shouldBe` updatedPerson
+
+  describe "updateLocations" $ do
     it "updates person's location to a new one" $
       let oldPerson = Person "John" ["kitchen"] [["kitchen"]] []
           updatedPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] [] in
-      updateLocation oldPerson ["bathroom"] `shouldBe` updatedPerson
+      updateLocations ["bathroom"] oldPerson `shouldBe` updatedPerson
 
-  describe "updateLocation" $ do
+  -- describe "updateLocation" $ do
+  --   it "updates person's location to a new one while the objects remain the same" $
+  --     let oldPerson = Person "John" ["kitchen"] [["kitchen"]] ["flower", "apple"]
+  --         updatedPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] ["flower", "apple"] in
+  --     updateLocation oldPerson ["bathroom"] `shouldBe` updatedPerson
+
+  describe "updateLocations" $ do
     it "updates person's location to a new one while the objects remain the same" $
       let oldPerson = Person "John" ["kitchen"] [["kitchen"]] ["flower", "apple"]
           updatedPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] ["flower", "apple"] in
-      updateLocation oldPerson ["bathroom"] `shouldBe` updatedPerson
+      updateLocations ["bathroom"] oldPerson `shouldBe` updatedPerson
 
   describe "removeLocation" $ do
     it "removes the only location from the person's location list" $
@@ -45,31 +57,31 @@ main = hspec $ do
     it "updates current location to empty list as the person leaves from the current location" $
       let oldPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] []
           updatedPerson = Person "John" [] [["kitchen"], ["bathroom"]] [] in
-      updateCurrentLocation oldPerson [] `shouldBe` updatedPerson
+      updateCurrentLocation [] oldPerson `shouldBe` updatedPerson
 
   describe "updateCurrentLocation" $ do
     it "updates current location as the person moves to another room" $
       let oldPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] []
           updatedPerson = Person "John" ["hallway"] [["kitchen"], ["bathroom"]] [] in
-      updateCurrentLocation oldPerson ["hallway"] `shouldBe` updatedPerson
+      updateCurrentLocation ["hallway"] oldPerson `shouldBe` updatedPerson
 
   describe "updateCurrentLocation" $ do
     it "updates current location with two options" $
       let oldPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] []
           updatedPerson = Person "John" ["hallway", "livingroom"] [["kitchen"], ["bathroom"]] [] in
-      updateCurrentLocation oldPerson ["hallway", "livingroom"] `shouldBe` updatedPerson
+      updateCurrentLocation ["hallway", "livingroom"] oldPerson `shouldBe` updatedPerson
 
   describe "updateLocationHistory" $ do
     it "adds new current location to location history" $
       let oldPerson = Person "John" ["hallway"] [["kitchen"], ["bathroom"]] []
           updatedPerson = Person "John" ["hallway"] [["kitchen"], ["bathroom"], ["hallway"]] [] in
-      updateLocationHistory oldPerson ["hallway"] `shouldBe` updatedPerson
+      updateLocationHistory ["hallway"] oldPerson `shouldBe` updatedPerson
 
   describe "updateLocationHistory" $ do
     it "adds new pair of current locations to location history" $
       let oldPerson = Person "John" ["hallway", "livingroom"] [["kitchen"], ["bathroom"]] []
           updatedPerson = Person "John" ["hallway", "livingroom"] [["kitchen"], ["bathroom"], ["hallway", "livingroom"]] [] in
-      updateLocationHistory oldPerson ["hallway", "livingroom"] `shouldBe` updatedPerson
+      updateLocationHistory ["hallway", "livingroom"] oldPerson `shouldBe` updatedPerson
 
   -- describe "addLocation" $ do
   --   it "adds one location" $
