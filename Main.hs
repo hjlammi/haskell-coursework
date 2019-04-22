@@ -1,3 +1,6 @@
+-- TODO: locationHistory: ["kitchen", Nothing, "park"] -> Where was X before park? don't know
+-- TODO: locationHistory in case of either or: ["kitchen", ["park", "backyard"]] -> Where was X after kitchen? "Either park or backyard"
+
 module Main where
 
 import System.IO
@@ -48,10 +51,10 @@ updateData dataElem (Person.PersonMovesFact f) =
       maybePerson = Map.lookup name $ persons dataElem
   in case maybePerson of
     Just person ->
-      let updatedPerson = Person.updateLocation person newLocation
+      let updatedPerson = Person.updateLocation person [newLocation]
       in (Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem) (routes dataElem))
     Nothing ->
-      let newPerson = Person.Person name [newLocation] [newLocation] []
+      let newPerson = Person.Person name [newLocation] [[newLocation]] []
       in (Data (insertPerson newPerson $ persons dataElem) (objects dataElem) (routes dataElem))
 
 updateData dataElem (Person.PersonMovesAwayFact f) =
@@ -63,7 +66,7 @@ updateData dataElem (Person.PersonMovesAwayFact f) =
           let updatedPerson = Person.removeLocation person location
           in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem) (routes dataElem)
         Nothing ->
-          let newPerson = (Person.Person name [] [location] [])
+          let newPerson = (Person.Person name [] [[location]] [])
           in Data (insertPerson newPerson $ persons dataElem) (objects dataElem) (routes dataElem)
 
 updateData dataElem (Person.PersonEitherLocationFact f) =
@@ -72,6 +75,7 @@ updateData dataElem (Person.PersonEitherLocationFact f) =
       maybePerson = Map.lookup name $ persons dataElem
       in case maybePerson of
         Just person ->
+          -- TODO: remove old location
           let updatedPerson = Person.addLocation person locations
           in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem) (routes dataElem)
       -- TODO: Nothing
@@ -117,7 +121,7 @@ updateData dataElem (Person.PersonHandsObjectFact f) =
         Nothing ->
           let updatedData = updateData dataElem (Person.PersonDiscardsObjectFact $ Person.PersonDiscardsObject oldOwnerName object)
               location = Person.currentLocation oldOwner
-              newPerson = (Person.Person newOwnerName location location [object])
+              newPerson = (Person.Person newOwnerName location [location] [object])
           in (Data (insertPerson newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData) (routes dataElem))
     Nothing ->
       let maybeNewOwner = Map.lookup newOwnerName (persons dataElem)
@@ -158,6 +162,7 @@ updateData dataElem (Person.RouteFact f) =
                     Route.extendRoutes from to direction &
                     Route.extendRoutes to from (Route.oppositeDirection direction)
               in Data (persons dataElem) (objects dataElem) extendedRoutes
+        Nothing -> dataElem
 
 insertPerson :: Person.Person -> Map.Map String Person.Person -> Map.Map String Person.Person
 insertPerson person persons =
@@ -171,8 +176,9 @@ answerOne parsedData (Just (PersonLocationQuestion q)) =
     Just person
       | length (Person.currentLocation person) > 1 && elem questionLocation (Person.currentLocation person) -> "maybe"
       | elem questionLocation (Person.currentLocation person) -> "yes"
-      | (null (Person.currentLocation person)) && (not (questionLocation == last (Person.locationHistory person))) -> "maybe"
-      | questionLocation == last (Person.locationHistory person) -> "no"
+      | (null (Person.currentLocation person)) && (null (Person.locationHistory person)) -> "maybe"
+      | (null (Person.currentLocation person)) && (not (questionLocation == head (last (Person.locationHistory person)))) -> "maybe"
+      | questionLocation == head (last (Person.locationHistory person)) -> "no"
       | not $ elem questionLocation (Person.currentLocation person) -> "no"
       | otherwise -> "maybe"
     Nothing -> "maybe"
@@ -229,16 +235,16 @@ answerOne parsedData (Just (PersonLocationAfterQuestion q)) =
 
 answerOne parsedData Nothing = "don't know"
 
-findLocationBefore :: [String] -> String -> Maybe String
+findLocationBefore :: [[String]] -> String -> Maybe String
 findLocationBefore [] _ = Nothing
 findLocationBefore [x] _ = Nothing
 findLocationBefore (x:xs) location
-  | location == head xs = Just x
+  | location == head (head xs) = Just (head x)
   | otherwise = findLocationBefore xs location
 
-findLocationAfter :: [String] -> String -> Maybe String
+findLocationAfter :: [[String]] -> String -> Maybe String
 findLocationAfter [] _ = Nothing
 findLocationAfter [x] location = Nothing
 findLocationAfter (x:xs) location
-  | location == x = Just (head xs)
+  | location == head x = Just (head $ head xs)
   | otherwise = findLocationAfter xs location

@@ -6,7 +6,7 @@ data Person =
   Person {
     name :: String,
     currentLocation :: [String],
-    locationHistory :: [String],
+    locationHistory :: [[String]],
     objects :: [String]
   } deriving (Show, Eq)
 
@@ -71,9 +71,9 @@ data Route =
     direction :: String
   } deriving (Show, Eq)
 
-updateLocation :: Person -> String -> Person
+updateLocation :: Person -> [String] -> Person
 updateLocation oldPerson newLocation =
-  (Person.Person (name oldPerson) [newLocation] ((locationHistory oldPerson ++ [newLocation])) (objects oldPerson))
+  (Person.Person (name oldPerson) newLocation ((locationHistory oldPerson ++ [newLocation])) (objects oldPerson))
 
 removeLocation :: Person -> String -> Person
 removeLocation person location
@@ -90,7 +90,7 @@ addLocation person xs =
   let name = Person.name person
       objects = Person.objects person
       locations = Person.currentLocation person
-      locationHistory = (Person.locationHistory person) ++ xs
+      locationHistory = (Person.locationHistory person) ++ [xs]
   in Person.Person name (locations ++ xs) locationHistory objects
 
 updateObjects :: Person -> String -> Person
