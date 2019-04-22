@@ -26,7 +26,7 @@ parseQuestion question = do
   parseQuestionMaybe questionParser question
 
 questionParser :: ReadP Question
-questionParser = (isInLocationQuestionParser <|> whereIsObjectQuestionParser <|> whereWasPersonBeforeQuestionParser <|> whereWasPersonAfterQuestionParser <|> howManyObjectsQuestionParser)
+questionParser = (isInLocationQuestionParser <|> whereIsObjectQuestionParser <|> whereWasPersonBeforeQuestionParser <|> whereWasPersonAfterQuestionParser <|> howManyObjectsQuestionParser <|> routeQuestionParser)
 
 isInLocationQuestionParser :: ReadP Question
 isInLocationQuestionParser = do
@@ -68,6 +68,15 @@ howManyObjectsQuestionParser = do
   name <- nameParser
   string " carrying ?"
   return (NumOfObjectsQuestion $ NumOfObjectsQ name)
+
+routeQuestionParser :: ReadP Question
+routeQuestionParser = do
+  string "How do you go from "
+  from <- locationParser
+  string " to "
+  to <- locationParser
+  string " ?"
+  return (RouteQuestion $ RouteQ from to)
 
 movementParser :: ReadP Fact
 movementParser = do

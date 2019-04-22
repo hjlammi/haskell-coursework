@@ -16,7 +16,8 @@ data Question =
   PersonLocationBeforeQuestion PersonLocationBeforeQ |
   PersonLocationAfterQuestion PersonLocationAfterQ |
   ObjectLocationQuestion ObjectLocationQ |
-  NumOfObjectsQuestion NumOfObjectsQ
+  NumOfObjectsQuestion NumOfObjectsQ |
+  RouteQuestion RouteQ
   deriving (Show, Eq)
 
 data PersonLocationQ =
@@ -45,4 +46,10 @@ data ObjectLocationQ =
 data NumOfObjectsQ =
  NumOfObjectsQ {
    ownerName :: String
+ } deriving (Show, Eq)
+
+data RouteQ =
+ RouteQ {
+   routeFrom :: String,
+   routeTo :: String
  } deriving (Show, Eq)

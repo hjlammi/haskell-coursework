@@ -164,3 +164,7 @@ main = hspec $ do
   describe "eitherLocationParser" $ do
     it "returns the name Fred and two possible locations" $
       readP_to_S eitherLocationParser "Fred is either in the school or the kitchen" `shouldBe` [(PersonEitherLocationFact $ PersonEitherLocation "Fred" ["school", "kitchen"], "")]
+
+  describe "routeQuestionParser" $ do
+    it "parses question asking how to get from a location to another" $
+      readP_to_S routeQuestionParser "How do you go from the garden to the office ?" `shouldBe` [(RouteQuestion $ RouteQ "garden" "office", "")]
