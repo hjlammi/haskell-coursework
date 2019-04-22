@@ -99,7 +99,7 @@ main = hspec $ do
 
   describe "parseFact" $ do
     it "returns direction from a room to another" $
-      parseFact "The bathroom is east of the bedroom" `shouldBe` Just (RouteFact $ Route "bathroom" "east" "bedroom")
+      parseFact "The bathroom is east of the bedroom" `shouldBe` Just (RouteFact $ Route "bedroom" "bathroom" "east")
 
   describe "questionParser" $ do
     it "returns parsed question in a list" $

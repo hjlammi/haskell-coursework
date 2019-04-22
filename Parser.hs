@@ -136,13 +136,13 @@ eitherLocationParser = do
 
 routeParser :: ReadP Fact
 routeParser = do
-  loc1 <- locationParser
+  to <- locationParser
   string " is "
   direction <- readSubStr
   string " of "
-  loc2 <- locationParser
+  from <- locationParser
   eof
-  return (RouteFact $ Route loc1 direction loc2)
+  return (RouteFact $ Route from to direction)
 
 nameParser :: ReadP String
 nameParser = do
