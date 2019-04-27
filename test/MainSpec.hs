@@ -20,7 +20,7 @@ main = hspec $ do
 
   describe "parseLine" $ do
     it "returns RouteFact formed from input of one line" $
-      Main.parseLine "The bathroom is east of the bedroom" `shouldBe` Just (RouteFact $ Route "bathroom" "east" "bedroom")
+      Main.parseLine "The bathroom is east of the bedroom" `shouldBe` Just (RouteFact $ Route "bedroom" "bathroom" "east")
 
 -- parseLines
   describe "parseLines" $ do
