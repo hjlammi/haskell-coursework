@@ -2,14 +2,15 @@ module PersonSpec where
 
 import Test.Hspec
 import Person
+import Fact
 
 main :: IO ()
 main = hspec $ do
-  -- describe "updateLocation" $ do
-  --   it "updates person's location to a new one" $
-  --     let oldPerson = Person "John" ["kitchen"] [["kitchen"]] []
-  --         updatedPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] [] in
-  --     updateLocation oldPerson ["bathroom"] `shouldBe` updatedPerson
+  describe "updateLocation" $ do
+    it "updates person's location to a new one" $
+      let oldPerson = Person "John" ["kitchen"] [["kitchen"]] []
+          updatedPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] [] in
+      updateLocation oldPerson ["bathroom"] `shouldBe` updatedPerson
 
   describe "updateLocations" $ do
     it "updates person's location to a new one" $
@@ -17,11 +18,11 @@ main = hspec $ do
           updatedPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] [] in
       updateLocations ["bathroom"] oldPerson `shouldBe` updatedPerson
 
-  -- describe "updateLocation" $ do
-  --   it "updates person's location to a new one while the objects remain the same" $
-  --     let oldPerson = Person "John" ["kitchen"] [["kitchen"]] ["flower", "apple"]
-  --         updatedPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] ["flower", "apple"] in
-  --     updateLocation oldPerson ["bathroom"] `shouldBe` updatedPerson
+  describe "updateLocation" $ do
+    it "updates person's location to a new one while the objects remain the same" $
+      let oldPerson = Person "John" ["kitchen"] [["kitchen"]] ["flower", "apple"]
+          updatedPerson = Person "John" ["bathroom"] [["kitchen"], ["bathroom"]] ["flower", "apple"] in
+      updateLocation oldPerson ["bathroom"] `shouldBe` updatedPerson
 
   describe "updateLocations" $ do
     it "updates person's location to a new one while the objects remain the same" $

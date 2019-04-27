@@ -1,5 +1,6 @@
 module Person where
 import Object
+import Fact
 import qualified Data.Map.Strict as Map
 import Data.Function ((&))
 
@@ -9,67 +10,6 @@ data Person =
     currentLocation :: [String],
     locationHistory :: [[String]],
     objects :: [String]
-  } deriving (Show, Eq)
-
-data Fact =
-  PersonMovesFact PersonMoves |
-  PersonMovesAwayFact PersonMovesAway |
-  PersonWasBeforeFact PersonWasBefore |
-  PersonTakesObjectFact PersonTakesObject |
-  PersonDiscardsObjectFact PersonDiscardsObject |
-  PersonHandsObjectFact PersonHandsObject |
-  PersonEitherLocationFact PersonEitherLocation |
-  RouteFact Route
-  deriving (Show, Eq)
-
-data PersonMoves =
-  PersonMoves {
-    personName :: String,
-    personLocation :: String
-  } deriving (Show, Eq)
-
-data PersonMovesAway =
-  PersonMovesAway {
-    personMovesAwayName :: String,
-    personMovesAwayLocation :: String
-  } deriving (Show, Eq)
-
-data PersonWasBefore =
-  PersonWasBefore {
-    personWasBeforeName :: String,
-    personWasBeforeLocation :: String
-  } deriving (Show, Eq)
-
-data PersonEitherLocation =
-  PersonEitherLocation {
-    personEitherLocationName :: String,
-    personEitherLocationLocations :: [String]
-  } deriving (Show, Eq)
-
-data PersonTakesObject =
-  PersonTakesObject {
-    personTakesObjectName :: String,
-    personTakesObjectObject :: String
-  } deriving (Show, Eq)
-
-data PersonDiscardsObject =
-  PersonDiscardsObject {
-    personDiscardsObjectName :: String,
-    personDiscardsObjectObject :: String
-  } deriving (Show, Eq)
-
-data PersonHandsObject =
-  PersonHandsObject {
-    personHandsObjectName :: String,
-    personGetsObjectName :: String,
-    personGetsObjectObject :: String
-  } deriving (Show, Eq)
-
-data Route =
-  Route {
-    roomFrom :: String,
-    roomTo :: String,
-    direction :: String
   } deriving (Show, Eq)
 
 updateLocation :: Person -> [String] -> Person
@@ -117,8 +57,8 @@ updateObjects oldPerson object =
 
 discardObject :: Person -> PersonDiscardsObject -> Person
 discardObject person fact =
-  let name = Person.personDiscardsObjectName fact
-      discardedObject = Person.personDiscardsObjectObject fact
+  let name = Fact.personDiscardsObjectName fact
+      discardedObject = Fact.personDiscardsObjectObject fact
       location = Person.currentLocation person
       locationHistory = Person.locationHistory person
       objects = Person.objects person in

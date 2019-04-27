@@ -8,6 +8,7 @@ import System.Environment
 import Control.Monad
 import Parser
 import Data
+import Fact
 import Question
 import qualified Person as Person
 import Object
@@ -36,18 +37,18 @@ answerQuestion parsedData = do
       print answer
       answerQuestion parsedData
 
-parseLine :: String -> Maybe Person.Fact
+parseLine :: String -> Maybe Fact
 parseLine line = parseFact $ line
 
-parseLines :: [String] -> [Person.Fact]
+parseLines :: [String] -> [Fact]
 parseLines lines =
   let listWithNothings = map parseLine lines
   in catMaybes listWithNothings
 
-updateData :: Data -> Person.Fact -> Data
-updateData dataElem (Person.PersonMovesFact f) =
-  let name = Person.personName f
-      newLocation = Person.personLocation f
+updateData :: Data -> Fact -> Data
+updateData dataElem (Fact.PersonMovesFact f) =
+  let name = Fact.personName f
+      newLocation = Fact.personLocation f
       maybePerson = Map.lookup name $ persons dataElem
   in case maybePerson of
     Just person ->
@@ -57,9 +58,9 @@ updateData dataElem (Person.PersonMovesFact f) =
       let newPerson = Person.Person name [newLocation] [[newLocation]] []
       in (Data (insertPerson newPerson $ persons dataElem) (objects dataElem))
 
-updateData dataElem (Person.PersonMovesAwayFact f) =
-  let name = Person.personMovesAwayName f
-      location = Person.personMovesAwayLocation f
+updateData dataElem (Fact.PersonMovesAwayFact f) =
+  let name = Fact.personMovesAwayName f
+      location = Fact.personMovesAwayLocation f
       maybePerson = Map.lookup name $ persons dataElem
       in case maybePerson of
         Just person ->
@@ -69,9 +70,9 @@ updateData dataElem (Person.PersonMovesAwayFact f) =
           let newPerson = (Person.Person name [] [[location]] [])
           in Data (insertPerson newPerson $ persons dataElem) (objects dataElem)
 
-updateData dataElem (Person.PersonEitherLocationFact f) =
-  let name = Person.personEitherLocationName f
-      locations = Person.personEitherLocationLocations f
+updateData dataElem (Fact.PersonEitherLocationFact f) =
+  let name = Fact.personEitherLocationName f
+      locations = Fact.personEitherLocationLocations f
       maybePerson = Map.lookup name $ persons dataElem
       in case maybePerson of
         Just person ->
@@ -80,23 +81,23 @@ updateData dataElem (Person.PersonEitherLocationFact f) =
           in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem)
       -- TODO: Nothing
 
-updateData dataElem (Person.PersonTakesObjectFact f) =
-  let name = Person.personTakesObjectName f
-      object = Person.personTakesObjectObject f
+updateData dataElem (Fact.PersonTakesObjectFact f) =
+  let name = Fact.personTakesObjectName f
+      object = Fact.personTakesObjectObject f
       maybePerson = Map.lookup name (persons dataElem)
   in case maybePerson of
       Just person ->
         let updatedPerson = Person.updateObjects person object
         in (Data (insertPerson updatedPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just name) Nothing) $ objects dataElem))
       Nothing ->
-        let newName = Person.personTakesObjectName f
-            newObject = Person.personTakesObjectObject f
+        let newName = Fact.personTakesObjectName f
+            newObject = Fact.personTakesObjectObject f
             newPerson = (Person.Person newName [] [] [object])
         in (Data (insertPerson newPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newName) Nothing) $ objects dataElem))
 
-updateData dataElem (Person.PersonDiscardsObjectFact f) =
-  let name = Person.personDiscardsObjectName f
-      object = Person.personDiscardsObjectObject f
+updateData dataElem (Fact.PersonDiscardsObjectFact f) =
+  let name = Fact.personDiscardsObjectName f
+      object = Fact.personDiscardsObjectObject f
       maybePerson = Map.lookup name (persons dataElem)
   in case maybePerson of
     Just person ->
@@ -105,21 +106,21 @@ updateData dataElem (Person.PersonDiscardsObjectFact f) =
     Nothing ->
       dataElem
 
-updateData dataElem (Person.PersonHandsObjectFact f) =
-  let oldOwnerName = Person.personHandsObjectName f
-      newOwnerName = Person.personGetsObjectName f
-      object = Person.personGetsObjectObject f
+updateData dataElem (Fact.PersonHandsObjectFact f) =
+  let oldOwnerName = Fact.personHandsObjectName f
+      newOwnerName = Fact.personGetsObjectName f
+      object = Fact.personGetsObjectObject f
       maybeOldOwner = Map.lookup oldOwnerName (persons dataElem)
   in case maybeOldOwner of
     Just oldOwner ->
       let maybeNewOwner = Map.lookup newOwnerName (persons dataElem)
       in case maybeNewOwner of
         Just newOwner ->
-          let updatedDataElem = updateData dataElem (Person.PersonDiscardsObjectFact $ Person.PersonDiscardsObject oldOwnerName object)
+          let updatedDataElem = updateData dataElem (Fact.PersonDiscardsObjectFact $ Fact.PersonDiscardsObject oldOwnerName object)
               newPerson = Person.updateObjects newOwner object
           in (Data (insertPerson newPerson $ persons updatedDataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedDataElem))
         Nothing ->
-          let updatedData = updateData dataElem (Person.PersonDiscardsObjectFact $ Person.PersonDiscardsObject oldOwnerName object)
+          let updatedData = updateData dataElem (Fact.PersonDiscardsObjectFact $ Fact.PersonDiscardsObject oldOwnerName object)
               location = Person.currentLocation oldOwner
               newPerson = (Person.Person newOwnerName location [location] [object])
           in (Data (insertPerson newPerson $ persons updatedData) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects updatedData))
@@ -138,7 +139,7 @@ updateData dataElem (Person.PersonHandsObjectFact f) =
           in (Data (insertPerson newOwner $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newOwnerName) Nothing) $ objects dataElem))
 
 -- Not implemented
-updateData dataElem (Person.RouteFact f) =
+updateData dataElem (Fact.RouteFact f) =
   dataElem
 
 insertPerson :: Person.Person -> Map.Map String Person.Person -> Map.Map String Person.Person

@@ -6,6 +6,7 @@ import Parser
 import Person
 import Object
 import Data
+import Fact
 import Question
 
 main :: IO ()
