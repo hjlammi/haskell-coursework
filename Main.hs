@@ -8,6 +8,7 @@ import System.Environment
 import Control.Monad
 import Parser
 import Data
+import Question
 import qualified Person as Person
 import Object
 import qualified Data.Map.Strict as Map

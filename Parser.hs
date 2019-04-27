@@ -4,6 +4,7 @@ import Control.Applicative
 import Person
 import Object
 import Data
+import Question
 import qualified Data.Map.Strict as Map
 
 parseFactMaybe :: ReadP a -> String -> Maybe a

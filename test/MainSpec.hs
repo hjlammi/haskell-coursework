@@ -7,6 +7,7 @@ import Parser
 import Person
 import Object
 import Data
+import Question
 import qualified Data.Map.Strict as Map
 
 main :: IO ()

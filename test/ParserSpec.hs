@@ -6,6 +6,7 @@ import Parser
 import Person
 import Object
 import Data
+import Question
 
 main :: IO ()
 main = hspec $ do
