@@ -20,15 +20,19 @@ import Data.Function ((&))
 main :: IO ()
 main = do
   args <- getArgs
-  let fileName = head args in do
-    contents <- readFile fileName
-    let listOfLines = lines contents
-        listOfFacts = parseLines listOfLines
-        parsedData = foldl updateData (Data Map.empty Map.empty) listOfFacts in do
-        -- debug lines for seeing what kind of data has been read and stored:
-        -- print listOfLines
-        -- print parsedData
-        answerQuestion parsedData
+  if length args > 0
+    then
+      let fileName = head args in do
+        contents <- readFile fileName
+        let listOfLines = lines contents
+            listOfFacts = parseLines listOfLines
+            parsedData = foldl updateData (Data Map.empty Map.empty) listOfFacts in do
+            -- debug lines for seeing what kind of data has been read and stored:
+            -- print listOfLines
+            -- print parsedData
+            answerQuestion parsedData
+    else
+      print "No input line given as a CLI argument."
 
 -- Loop for answering questions that are typed in the command-line
 -- The program can be stopped by typing 'quit'
