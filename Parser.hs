@@ -160,8 +160,7 @@ verbMoveParser = do
   if isInList verb ["moved", "went", "journeyed", "travelled"]
     then do
       satisfy (== ' ')
-      string "to"
-      satisfy (== ' ')
+      string "to "
       return ()
     else
       pfail
@@ -193,15 +192,13 @@ verbDiscardObjectParser = do
 
 locationParser :: ReadP String
 locationParser = do
-  string "the" <|> string "The"
-  satisfy (== ' ')
+  string "the " <|> string "The "
   location <- readSubStr
   return location
 
 objectParser :: ReadP String
 objectParser = do
-  string "the"
-  satisfy (== ' ')
+  string "the "
   object <- readSubStr
   return object
 
