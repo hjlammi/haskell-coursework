@@ -246,6 +246,18 @@ main = hspec $ do
                      (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
       Main.updateData d fact `shouldBe` expected
 
+  describe "updateData" $ do
+    it "adds new person two possible locations" $
+      let d = Data
+              (Map.fromList [("Fred", Person "Fred" [] [] ["flower"])])
+              (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)])
+          fact = (PersonEitherLocationFact $ PersonEitherLocation "Mary" ["park", "kitchen"])
+          expected = Data
+                     (Map.fromList [("Fred", Person "Fred" [] [] ["flower"]),
+                                    ("Mary", Person "Mary" ["park", "kitchen"] [["park", "kitchen"]] [])])
+                     (Map.fromList [("flower", Object $ ObjectLocation (Just "Fred") Nothing)]) in
+      Main.updateData d fact `shouldBe` expected
+
   -- insertPerson
   describe "insertPerson" $ do
     it "adds a person in an empty persons Map" $

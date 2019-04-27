@@ -76,10 +76,11 @@ updateData dataElem (Fact.PersonEitherLocationFact f) =
       maybePerson = Map.lookup name $ persons dataElem
       in case maybePerson of
         Just person ->
-          -- TODO: remove old location
           let updatedPerson = Person.updateLocations locations person
           in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem)
-      -- TODO: Nothing
+        Nothing ->
+          let newPerson = (Person.Person name locations [locations] [])
+          in Data (insertPerson newPerson $ persons dataElem) (objects dataElem)
 
 updateData dataElem (Fact.PersonTakesObjectFact f) =
   let name = Fact.personTakesObjectName f
