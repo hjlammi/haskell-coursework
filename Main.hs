@@ -105,7 +105,8 @@ updateData dataElem (Fact.PersonDiscardsObjectFact f) =
       let updatedPerson = Person.discardObject person f
       in (Data (insertPerson updatedPerson $ persons dataElem) (Map.delete object $ objects dataElem))
     Nothing ->
-      dataElem
+      let newPerson = (Person.Person name [] [] [])
+      in (Data (insertPerson newPerson $ persons dataElem) (objects dataElem))
 
 updateData dataElem (Fact.PersonHandsObjectFact f) =
   let oldOwnerName = Fact.personHandsObjectName f
