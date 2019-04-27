@@ -2,6 +2,7 @@
 -- TODO: locationHistory: ["kitchen", Nothing, "park"] -> Where was X before park? don't know
 -- TODO: locationHistory in case of either or: ["kitchen", ["park", "backyard"]] -> Where was X after kitchen? "Either park or backyard"
 
+-- The tasks 1-5 were implemented in the program.
 module Main where
 
 import System.IO
