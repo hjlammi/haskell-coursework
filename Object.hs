@@ -6,6 +6,7 @@ data Object =
     objectLocation :: ObjectLocation
   } deriving (Show, Eq)
 
+-- Object could be either on a person or in a location
 data ObjectLocation =
   ObjectLocation {
     onPerson :: Maybe String,

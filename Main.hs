@@ -1,3 +1,4 @@
+-- These are just notes for myself about how the program could be developed further:
 -- TODO: locationHistory: ["kitchen", Nothing, "park"] -> Where was X before park? don't know
 -- TODO: locationHistory in case of either or: ["kitchen", ["park", "backyard"]] -> Where was X after kitchen? "Either park or backyard"
 
@@ -24,10 +25,13 @@ main = do
     let listOfLines = lines contents
         listOfFacts = parseLines listOfLines
         parsedData = foldl updateData (Data Map.empty Map.empty) listOfFacts in do
-        print listOfLines
-        print parsedData
+        -- debug lines for seeing what kind of data has been read and stored:
+        -- print listOfLines
+        -- print parsedData
         answerQuestion parsedData
 
+-- Loop for answering questions that are typed in the command-line
+-- The program can be stopped by typing 'quit'
 answerQuestion :: Data -> IO ()
 answerQuestion parsedData = do
   question <- getLine
@@ -40,11 +44,15 @@ answerQuestion parsedData = do
 parseLine :: String -> Maybe Fact
 parseLine line = parseFact $ line
 
+-- If a line from the input file cannot be parsed into a fact,
+-- a Nothing is returned from the parser. parseLines function removes those
+-- Nothing instances from the list of facts.
 parseLines :: [String] -> [Fact]
 parseLines lines =
   let listWithNothings = map parseLine lines
   in catMaybes listWithNothings
 
+-- Updates an existing person's location or adds a new person with the location.
 updateData :: Data -> Fact -> Data
 updateData dataElem (Fact.PersonMovesFact f) =
   let name = Fact.personName f
@@ -58,6 +66,7 @@ updateData dataElem (Fact.PersonMovesFact f) =
       let newPerson = Person.Person name [newLocation] [[newLocation]] []
       in (Data (insertPerson newPerson $ persons dataElem) (objects dataElem))
 
+-- Removes a location from a person moving away from the location.
 updateData dataElem (Fact.PersonMovesAwayFact f) =
   let name = Fact.personMovesAwayName f
       location = Fact.personMovesAwayLocation f
@@ -67,9 +76,11 @@ updateData dataElem (Fact.PersonMovesAwayFact f) =
           let updatedPerson = Person.removeLocation person location
           in Data (insertPerson updatedPerson $ persons dataElem) (objects dataElem)
         Nothing ->
+          -- The new person is no longer in the location but the location is stored in their history
           let newPerson = (Person.Person name [] [[location]] [])
           in Data (insertPerson newPerson $ persons dataElem) (objects dataElem)
 
+-- Updates person to have two possible locations
 updateData dataElem (Fact.PersonEitherLocationFact f) =
   let name = Fact.personEitherLocationName f
       locations = Fact.personEitherLocationLocations f
@@ -82,6 +93,7 @@ updateData dataElem (Fact.PersonEitherLocationFact f) =
           let newPerson = (Person.Person name locations [locations] [])
           in Data (insertPerson newPerson $ persons dataElem) (objects dataElem)
 
+-- Adds an object to a person
 updateData dataElem (Fact.PersonTakesObjectFact f) =
   let name = Fact.personTakesObjectName f
       object = Fact.personTakesObjectObject f
@@ -96,6 +108,7 @@ updateData dataElem (Fact.PersonTakesObjectFact f) =
             newPerson = (Person.Person newName [] [] [object])
         in (Data (insertPerson newPerson $ persons dataElem) (Map.insert object (Object $ ObjectLocation (Just newName) Nothing) $ objects dataElem))
 
+-- Removes the object from a person
 updateData dataElem (Fact.PersonDiscardsObjectFact f) =
   let name = Fact.personDiscardsObjectName f
       object = Fact.personDiscardsObjectObject f
@@ -105,9 +118,11 @@ updateData dataElem (Fact.PersonDiscardsObjectFact f) =
       let updatedPerson = Person.discardObject person f
       in (Data (insertPerson updatedPerson $ persons dataElem) (Map.delete object $ objects dataElem))
     Nothing ->
+      -- A new person is added without the discarded object
       let newPerson = (Person.Person name [] [] [])
       in (Data (insertPerson newPerson $ persons dataElem) (objects dataElem))
 
+-- Person hands an object to another person. If the persons do not exist in the data before, they have to be added there.
 updateData dataElem (Fact.PersonHandsObjectFact f) =
   let oldOwnerName = Fact.personHandsObjectName f
       newOwnerName = Fact.personGetsObjectName f
@@ -144,10 +159,12 @@ updateData dataElem (Fact.PersonHandsObjectFact f) =
 updateData dataElem (Fact.RouteFact f) =
   dataElem
 
+-- A helper function for inserting a person in the persons map
 insertPerson :: Person.Person -> Map.Map String Person.Person -> Map.Map String Person.Person
 insertPerson person persons =
   Map.insert (Person.name person) person $ persons
 
+-- Answers a question regarding a person's location
 answerOne :: Data -> Maybe Question -> String
 answerOne parsedData (Just (PersonLocationQuestion q)) =
   let maybePerson = Map.lookup (personLocationName q) (persons parsedData)
@@ -163,6 +180,7 @@ answerOne parsedData (Just (PersonLocationQuestion q)) =
       | otherwise -> "maybe"
     Nothing -> "maybe"
 
+-- Answers a question regarding the location of an object
 answerOne parsedData (Just (ObjectLocationQuestion q)) =
   let maybeObject = Map.lookup (objectName q) (objects parsedData)
   in case maybeObject of
@@ -177,11 +195,11 @@ answerOne parsedData (Just (ObjectLocationQuestion q)) =
               let maybePerson = Map.lookup personName (persons parsedData)
               in case maybePerson of
                 Just person ->
-                  -- TODO: WHAT IF SEVERAL LOCATIONS
                   head $ Person.currentLocation person
             Nothing -> "don't know"
     Nothing -> "don't know"
 
+-- Answers how many objects a person has on them
 answerOne parsedData (Just (NumOfObjectsQuestion q)) =
   let maybePerson = Map.lookup (ownerName q) (persons parsedData)
   in case maybePerson of
@@ -189,6 +207,7 @@ answerOne parsedData (Just (NumOfObjectsQuestion q)) =
       show (Person.countObjects person) :: String
     Nothing -> "don't know"
 
+-- Answers a question about the previous location of a person
 answerOne parsedData (Just (PersonLocationBeforeQuestion q)) =
   let maybePerson = Map.lookup (personLocationBeforeName q) (persons parsedData)
   in case maybePerson of
@@ -201,6 +220,7 @@ answerOne parsedData (Just (PersonLocationBeforeQuestion q)) =
         Nothing -> "don't know"
     Nothing -> "don't know"
 
+-- Answers a question about the next location of a person
 answerOne parsedData (Just (PersonLocationAfterQuestion q)) =
   let maybePerson = Map.lookup (personLocationAfterName q) (persons parsedData)
   in case maybePerson of
@@ -213,6 +233,7 @@ answerOne parsedData (Just (PersonLocationAfterQuestion q)) =
         Nothing -> "don't know"
     Nothing -> "don't know"
 
+-- If a question cannot be parsed, we cannot answer it
 answerOne parsedData Nothing = "don't know"
 
 answerOne parsedData _ = "don't know"
